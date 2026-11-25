@@ -1,9 +1,9 @@
-# Cuello
+# Cervicales app
 
 App de una sola página para dolor cervical: te guía la sesión de ejercicios paso por paso, te
 recuerda las pausas activas y lleva el registro de dolor, adherencia, sueño y actividad.
 
-**→ https://julianrodriguezia1.github.io/cuello/**
+**→ https://julianrodriguezia1.github.io/cervicales-app/**
 
 Se puede instalar en el teléfono desde el navegador y funciona sin internet.
 

@@ -3,7 +3,7 @@
 //     hasta que el navegador decida soltar la cache vieja;
 //   - los ESTATICOS (iconos, manifest) van cache-first, porque no cambian.
 // En los dos casos, sin internet se sirve lo cacheado: la app funciona offline.
-var CACHE = "cuello-v4";
+var CACHE = "cervicales-v5";
 var ARCHIVOS = ["./", "./index.html", "./manifest.webmanifest", "./icono.svg",
                 "./icono-192.png", "./icono-512.png", "./icono-maskable.png"];
 
