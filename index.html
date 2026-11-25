@@ -1,0 +1,2550 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro de cuello</title>
+<meta name="description" content="Programa de ejercicios para dolor cervical con la fuente de cada indicación, y registro diario de dolor, adherencia, sueño y actividad.">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cuello">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fondo:#0a0a0a; --fondo-2:#141414; --fondo-3:#1c1c1c;
+  --texto:#ffffff; --texto-suave:#cccccc; --texto-tenue:#8a8a8a;
+  --acento:#ff7a00; --acento-humo:#2a1a08;
+  --linea:#262626; --linea-fina:#1c1c1c;
+  --ok:#4ade80; --alerta:#f87171;
+  --titulo:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cuerpo:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background-color:var(--fondo); color:var(--texto);
+  font-family:var(--cuerpo); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.hoja{max-width:60rem;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+
+h1,h2,h3{font-family:var(--titulo);margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,6vw,2.9rem);letter-spacing:-.025em;line-height:1.04}
+h2{font-size:1.05rem}
+/* Encabezado de seccion: etiqueta chica en mono + una linea que la cruza.
+   Lo importante de la pantalla es el bloque de accion, no los titulos. */
+.eyebrow{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--texto-tenue);display:flex;align-items:center;gap:.9rem;margin:0 0 .9rem;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--linea)}
+.kicker{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acento);margin:0 0 .6rem}
+.cabecera{padding-bottom:1.3rem;margin-bottom:2rem;border-bottom:1px solid var(--linea)}
+.cabecera h1{margin:.35rem 0 0}
+.sub{color:var(--texto-tenue);font-size:.9rem;margin:.5rem 0 0}
+
+section{margin:2.6rem 0 0}
+section:first-of-type{margin-top:0}
+.panel{background:var(--fondo-2);border:1px solid var(--linea);border-radius:10px;padding:1.25rem 1.25rem 1.4rem}
+.panel + .panel{margin-top:1rem}
+
+/* ---- métricas ---- */
+/* Las metricas informan, no mandan: van en una tira compacta, sin cajas. */
+.metricas{display:grid;grid-template-columns:repeat(auto-fit,minmax(7.5rem,1fr));gap:1px;
+  background:var(--linea);border:1px solid var(--linea);border-radius:11px;overflow:hidden}
+.metrica{background:var(--fondo-2);padding:.85rem .95rem}
+.metrica .n{font-family:var(--titulo);font-size:1.5rem;line-height:1.05;color:var(--acento);
+  letter-spacing:-.02em}
+.metrica .n.tenue{color:var(--texto-tenue)}
+.metrica .et{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--texto-tenue);margin-top:.35rem}
+.metrica .pie{font-size:.72rem;color:var(--texto-tenue);margin-top:.4rem;line-height:1.4}
+
+/* ---- formulario ---- */
+.campo{margin:1.15rem 0 0}
+.campo:first-child{margin-top:0}
+label.et{display:block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--texto-tenue);margin-bottom:.45rem}
+.fila{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+input[type=date],input[type=number],textarea{
+  background:var(--fondo-3);border:1px solid var(--linea);color:var(--texto);
+  font-family:var(--cuerpo);font-size:.95rem;border-radius:7px;padding:.55rem .7rem;
+}
+input[type=number]{width:7rem}
+textarea{width:100%;min-height:3.5rem;resize:vertical}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acento);outline-offset:1px}
+
+.escala{display:flex;gap:.35rem;flex-wrap:wrap}
+.escala button{
+  background:var(--fondo-3);border:1px solid var(--linea);color:var(--texto-suave);
+  font-family:var(--mono);font-size:.9rem;min-width:2.5rem;padding:.5rem 0;border-radius:7px;cursor:pointer;
+}
+.escala button:hover{border-color:var(--acento)}
+.escala button[aria-pressed=true]{background:var(--acento);border-color:var(--acento);color:#0a0a0a;font-weight:600}
+
+.toggle{display:flex;gap:.5rem}
+.toggle button{
+  background:var(--fondo-3);border:1px solid var(--linea);color:var(--texto-suave);
+  font-family:var(--cuerpo);font-size:.9rem;padding:.55rem 1.1rem;border-radius:7px;cursor:pointer;
+}
+.toggle button:hover{border-color:var(--acento)}
+.toggle button[aria-pressed=true]{background:var(--acento);border-color:var(--acento);color:#0a0a0a;font-weight:600}
+
+.btn{
+  background:var(--acento);border:1px solid var(--acento);color:#0a0a0a;
+  font-family:var(--cuerpo);font-weight:600;font-size:.95rem;
+  padding:.65rem 1.4rem;border-radius:7px;cursor:pointer;
+}
+.btn:hover{filter:brightness(1.1)}
+.btn.sec{background:transparent;color:var(--texto-suave);border-color:var(--linea)}
+.btn.sec:hover{border-color:var(--acento);color:var(--texto);filter:none}
+.acciones{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.4rem}
+.aviso{font-size:.85rem;color:var(--ok);margin-left:.2rem}
+
+/* ---- gráfico ---- */
+.grafico{width:100%;height:150px;display:block}
+.leyenda{font-size:.75rem;color:var(--texto-tenue);margin-top:.5rem}
+
+/* ---- tabla ---- */
+.tabla-wrap{overflow-x:auto;margin-top:1rem}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--linea-fina);white-space:nowrap}
+th{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-tenue);border-bottom:1px solid var(--linea)}
+td.num{font-family:var(--mono)}
+tr:hover td{background:var(--fondo-2)}
+td.nota{white-space:normal;color:var(--texto-tenue);max-width:18rem}
+.si{color:var(--ok)} .no{color:var(--texto-tenue)}
+
+/* ---- hitos ---- */
+.hitos{list-style:none;padding:0;margin:1rem 0 0}
+.hitos li{display:flex;gap:.75rem;align-items:baseline;padding:.45rem 0;border-bottom:1px solid var(--linea-fina);font-size:.9rem}
+.hitos .cuando{font-family:var(--mono);font-size:.78rem;color:var(--acento);min-width:6.5rem}
+.hitos li.pasado .cuando{color:var(--texto-tenue)}
+
+/* ---- alarma ---- */
+.alarma{border:1px solid var(--alerta);background:#1a0d0d;border-radius:10px;padding:1.1rem 1.25rem}
+.alarma h2{color:var(--alerta)}
+.alarma ul{margin:.7rem 0 0;padding-left:1.2rem;color:var(--texto-suave);font-size:.9rem}
+.alarma li{margin:.25rem 0}
+
+.nota-pie{font-size:.8rem;color:var(--texto-tenue);margin-top:2.5rem;border-top:1px solid var(--linea);padding-top:1rem}
+.nota-pie code{font-family:var(--mono);color:var(--texto-suave)}
+a{color:var(--acento)}
+.vacio{color:var(--texto-tenue);font-size:.9rem;font-style:italic}
+
+/* ---- hero: la accion del dia ----
+   Es lo unico que hay que hacer hoy, asi que ocupa el lugar y el peso que
+   ninguna de las otras secciones tiene. */
+.hero{
+  background:linear-gradient(180deg,var(--acento-humo),var(--fondo-2) 42%);
+  border:1px solid var(--linea);border-radius:14px;padding:1.4rem 1.4rem 1.2rem;
+}
+.hero-semana{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.3rem}
+.tira{width:100%;max-width:15rem;height:auto;display:block}
+.tira-pie{margin:0;font-size:.8rem;color:var(--texto-suave)}
+.tira-pie b{color:var(--texto)}
+
+.hoy{display:grid;grid-template-columns:1fr;gap:.6rem}
+@media (min-width:34rem){ .hoy{grid-template-columns:1.4fr 1fr} }
+.acc{
+  background:var(--fondo-3);border:1px solid var(--linea);color:var(--texto);
+  text-align:left;padding:1rem 1.15rem;border-radius:11px;cursor:pointer;font-family:var(--cuerpo);
+  transition:border-color .15s,background .15s,transform .15s;
+}
+.acc:hover{border-color:var(--acento);transform:translateY(-1px)}
+.acc .t{font-family:var(--titulo);font-size:1.05rem;display:block}
+.acc .d{font-size:.8rem;color:var(--texto-tenue);display:block;margin-top:.25rem;line-height:1.45}
+.acc-fuerte{background:var(--acento);border-color:var(--acento);color:#0a0a0a}
+.acc-fuerte .t{font-size:1.2rem}
+.acc-fuerte .d{color:rgba(10,10,10,.72)}
+.acc-fuerte:hover{filter:brightness(1.07);border-color:var(--acento)}
+.acc[disabled]{opacity:.5;cursor:default;transform:none;background:var(--fondo-3);
+  border-color:var(--linea);color:var(--texto)}
+.acc[disabled] .d{color:var(--texto-tenue)}
+
+/* ---- figuras de los ejercicios ----
+   Muñeco articulado dibujado con trazos redondeados. El cuerpo va en gris
+   (tres tonos: lejos, tronco, cerca), el acento se reserva para lo que se
+   mueve, las flechas, el recorrido y la mano que hace fuerza. */
+.fig{width:100%;max-width:19rem;height:auto;display:block;margin:0 auto}
+.fig line{stroke-linecap:round}
+.fig .f-borde{stroke:var(--fondo-3)}
+.fig .f-borde-c{fill:var(--fondo-3)}
+.fig .f-lejos{stroke:#383838;fill:#383838}
+.fig .f-tronco{stroke:#4f4f4f;fill:#4f4f4f}
+.fig .f-cabeza{fill:#5a5a5a}
+.fig .f-cerca{stroke:#6a6a6a;fill:#6a6a6a}
+.fig .f-mueve{stroke:var(--acento);fill:var(--acento)}
+.fig .f-fant{stroke:var(--acento);fill:var(--acento)}
+.fig .f-fant-g{opacity:.16}
+.fig .f-ojo{fill:#111}
+.fig .f-nariz,.fig .f-nariz-p{fill:#111;opacity:.55}
+.fig .f-boca{stroke:#111;opacity:.55}
+.fig .f-mirada{stroke:#8a8a8a;stroke-dasharray:2 4;fill:none}
+.fig .f-pesa{stroke:#9a9a9a;fill:#9a9a9a}
+.fig .f-pesa-disco{fill:#2c2c2c;stroke:#9a9a9a;stroke-width:2}
+.fig .f-banda{stroke:#c9c9c9;opacity:.7}
+.fig .f-piso{stroke:#333;stroke-width:3}
+.fig .f-mueble{fill:#262626;stroke:#3a3a3a;stroke-width:1.5}
+.fig .f-mueble-l{stroke:#3a3a3a;stroke-width:4}
+.fig .f-tension{fill:var(--acento)}
+.fig .f-flecha{stroke:var(--acento)}
+.fig .f-punta{fill:var(--acento)}
+.fig .f-ruta{stroke:var(--acento);stroke-width:1.6;stroke-dasharray:3 4;fill:none;opacity:.75}
+.fig .f-ruta-punta{fill:var(--acento);opacity:.75}
+.fig .f-guia{stroke:#6a6a6a;stroke-width:.9}
+.fig .f-guia-pt{fill:#9a9a9a}
+.fig .f-nota{font-family:var(--cuerpo,Inter,system-ui,sans-serif);font-size:9.5px;fill:#cfcfcf}
+.fig .f-nota.fuerte{fill:var(--acento);font-weight:600}
+.fig .f-fase{paint-order:stroke;stroke:var(--fondo-3);stroke-width:5px;stroke-linejoin:round;font-family:var(--mono,ui-monospace,monospace);font-size:10px;letter-spacing:.12em;fill:var(--acento)}
+
+/* ---- plan ---- */
+.plan{background:var(--fondo-2);border:1px solid var(--linea);border-radius:10px;margin-top:1rem}
+.plan summary{
+  cursor:pointer;padding:1rem 1.25rem;font-family:var(--titulo);font-size:1rem;
+  list-style:none;display:flex;align-items:center;gap:.6rem;
+}
+.plan summary::-webkit-details-marker{display:none}
+.plan summary::before{content:"+";color:var(--acento);font-family:var(--mono);font-size:1.1rem}
+.plan[open] summary::before{content:"–"}
+.plan summary:hover{color:var(--acento)}
+.plan-cuerpo{padding:0 1.25rem 1.4rem;border-top:1px solid var(--linea);margin-top:0}
+.plan-cuerpo h3{font-family:var(--titulo);font-size:.95rem;color:var(--acento);margin:1.4rem 0 .5rem}
+.plan-cuerpo p{margin:.55rem 0;font-size:.92rem;color:var(--texto-suave)}
+.plan-cuerpo ul{margin:.55rem 0;padding-left:1.2rem;font-size:.92rem;color:var(--texto-suave)}
+.plan-cuerpo li{margin:.28rem 0}
+.plan-cuerpo table{margin:.6rem 0;width:100%;table-layout:fixed}
+.plan-cuerpo th,.plan-cuerpo td{white-space:normal;word-break:break-word;font-size:.86rem}
+.plan-cuerpo .chico{font-size:.8rem;color:var(--texto-tenue);font-style:italic}
+.plan-cuerpo b{color:var(--texto)}
+.plan-cuerpo code{font-family:var(--mono);font-size:.85em;color:var(--texto-suave)}
+
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:.7rem;margin:.8rem 0 0}
+.galeria figure{margin:0;background:var(--fondo-3);border:1px solid var(--linea);border-radius:9px;padding:.45rem}
+.galeria .fig{max-width:100%}
+.galeria figcaption{font-size:.72rem;color:var(--texto-tenue);text-align:center;margin-top:.3rem;line-height:1.35}
+
+/* ---- recordatorio ---- */
+.recordatorio{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;margin-top:1.1rem;
+  padding-top:1rem;border-top:1px solid var(--linea);font-size:.82rem;color:var(--texto-tenue)}
+.recordatorio .chico{font-size:.76rem}
+.recordatorio select{
+  background:var(--fondo-3);border:1px solid var(--linea);color:var(--texto);
+  font-family:var(--cuerpo);font-size:.88rem;border-radius:7px;padding:.4rem .55rem;
+}
+.recordatorio .estado{font-family:var(--mono);font-size:.78rem;color:var(--acento)}
+.aviso-pausa{
+  position:fixed;left:0;right:0;top:0;z-index:60;background:var(--acento);color:#0a0a0a;
+  display:none;align-items:center;gap:1rem;padding:.85rem 1.25rem;font-weight:600;
+  box-shadow:0 2px 18px rgba(0,0,0,.5);
+}
+.aviso-pausa[data-abierto=si]{display:flex}
+.aviso-pausa button{
+  background:#0a0a0a;color:#fff;border:none;border-radius:6px;padding:.45rem 1rem;
+  font-family:var(--cuerpo);font-weight:600;font-size:.85rem;cursor:pointer;
+}
+.aviso-pausa button.fantasma{background:transparent;color:#0a0a0a;border:1px solid rgba(0,0,0,.35)}
+.aviso-pausa .ml{margin-left:auto}
+
+/* ---- revisión ---- */
+.rev{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1rem}
+.rev-item{border-left:2px solid var(--linea);padding-left:.9rem}
+.rev-item .t{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-tenue)}
+.rev-item .v{font-family:var(--titulo);font-size:1.35rem;margin-top:.2rem}
+.rev-item .c{font-size:.8rem;color:var(--texto-tenue);margin-top:.3rem;line-height:1.45}
+.rev-item.bien{border-left-color:var(--ok)}
+.rev-item.mal{border-left-color:var(--alerta)}
+.veredicto{margin-top:1.4rem;padding-top:1.1rem;border-top:1px solid var(--linea);
+  font-size:.92rem;color:var(--texto-suave)}
+.veredicto strong{color:var(--texto)}
+
+/* ---- runner ---- */
+.runner{
+  position:fixed;inset:0;background:rgba(6,6,6,.96);z-index:50;
+  display:none;align-items:center;justify-content:center;padding:1.25rem;
+}
+.runner[data-abierto=si]{display:flex}
+.runner-caja{
+  background:var(--fondo-2);border:1px solid var(--linea);border-radius:12px;
+  width:100%;max-width:34rem;padding:1.4rem 1.5rem 1.5rem;max-height:100%;overflow-y:auto;
+}
+.barra{height:4px;background:var(--fondo-3);border-radius:2px;overflow:hidden;margin-bottom:1.1rem}
+.barra i{display:block;height:100%;background:var(--acento);width:0;transition:width .2s}
+.runner .bloque{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acento)}
+.runner h3{font-family:var(--titulo);font-size:1.4rem;margin:.5rem 0 0;text-wrap:balance}
+.fig-caja{
+  background:var(--fondo-3);border:1px solid var(--linea);border-radius:11px;
+  padding:.35rem;margin:1.1rem 0 .2rem;
+}
+.fig-caja .fig{max-width:24rem}
+.runner .dosis{font-family:var(--mono);font-size:1.05rem;color:var(--texto);margin:.7rem 0 0}
+.runner .como{color:var(--texto-suave);font-size:.94rem;margin:.8rem 0 0}
+.runner .cuidado{color:#fca5a5;font-size:.86rem;margin:.8rem 0 0}
+.runner .cuidado.es-falta{color:var(--texto-suave)}
+.chip-falta{
+  display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;
+  background:var(--acento-humo);color:var(--acento);border:1px solid var(--acento);
+  border-radius:4px;padding:.1rem .4rem;margin-right:.5rem;vertical-align:.08em;
+}
+/* La procedencia importa —es lo que distingue a esto de cualquier app de
+   ejercicios— pero no tiene que competir con la instruccion. Va plegada. */
+.fuente{margin:1rem 0 0;border-top:1px solid var(--linea);padding-top:.7rem}
+.fuente summary{
+  cursor:pointer;list-style:none;font-family:var(--mono);font-size:.64rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--texto-tenue);
+}
+.fuente summary::-webkit-details-marker{display:none}
+.fuente summary::before{content:"› ";color:var(--acento)}
+.fuente[open] summary::before{content:"⌄ "}
+.fuente summary:hover{color:var(--acento)}
+.runner .origen{color:var(--texto-tenue);font-size:.78rem;margin:.6rem 0 0;line-height:1.55}
+.reloj{font-family:var(--mono);font-size:3rem;line-height:1;color:var(--acento);margin:1rem 0 0;letter-spacing:-.02em}
+.reloj.quieto{color:var(--texto-tenue)}
+.runner-pie{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.5rem}
+.runner-pie .paso{margin-left:auto;font-family:var(--mono);font-size:.78rem;color:var(--texto-tenue)}
+.runner .intro{color:var(--texto-suave);font-size:.94rem;margin:.9rem 0 0}
+.runner .intro ul{margin:.6rem 0 0;padding-left:1.15rem}
+.runner .intro li{margin:.3rem 0}
+.opcion{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+
+/* ---- impresión: papel blanco, tinta negra ---- */
+@media print{
+  :root{
+    --fondo:#fff;--fondo-2:#fff;--fondo-3:#fff;
+    --texto:#000;--texto-suave:#222;--texto-tenue:#555;
+    --acento:#b34e00;--linea:#bbb;--linea-fina:#ddd;--ok:#155724;--alerta:#8b0000;
+  }
+  body{background:#fff;color:#000;font-size:11pt}
+  .hoja{max-width:none;padding:0}
+  .panel,.metrica{border:1px solid #bbb;background:#fff}
+  .no-imprimir,.acciones,.escala,.toggle,form{display:none !important}
+  .alarma{background:#fff}
+  table{font-size:9pt}
+  th,td{white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="hoja">
+
+  <header class="cabecera">
+    <p class="kicker">Plan de cuello</p>
+    <h1>Fuerza, no estiramientos</h1>
+    <p class="sub" id="estado-cabecera">Cargá el primer día para empezar a medir.</p>
+  </header>
+
+  <!-- ===================== HOY: lo unico que hay que hacer ===================== -->
+  <section class="no-imprimir" aria-labelledby="t-hoy">
+    <h2 id="t-hoy" class="eyebrow">Hoy</h2>
+    <div class="hero">
+      <div class="hero-semana">
+        <svg class="tira" id="tira" viewBox="0 0 224 44" role="img"
+             aria-label="Sesiones de fuerza de los ultimos siete dias"></svg>
+        <p class="tira-pie" id="tira-pie"></p>
+      </div>
+      <div class="hoy">
+        <button type="button" id="btn-sesion" class="acc acc-fuerte">
+          <span class="t">Empezar la sesión</span>
+          <span class="d" id="d-sesion">4 bloques. Al terminar queda registrada sola.</span>
+        </button>
+        <button type="button" id="btn-pausa" class="acc">
+          <span class="t">Pausa activa · 1 min</span>
+          <span class="d" id="d-pausa">6 movimientos sentado.</span>
+        </button>
+      </div>
+      <div class="recordatorio">
+        <label for="sel-recordatorio">Recordarme la pausa cada</label>
+        <select id="sel-recordatorio">
+          <option value="0">nunca</option>
+          <option value="30">30 min</option>
+          <option value="45">45 min</option>
+          <option value="60">60 min</option>
+        </select>
+        <span class="estado" id="estado-recordatorio"></span>
+        <span class="chico">solo con esta pestaña abierta</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MÉTRICAS ===================== -->
+  <section aria-labelledby="t-metricas">
+    <h2 id="t-metricas" class="eyebrow">Cómo venís</h2>
+    <div class="metricas" id="metricas"></div>
+  </section>
+
+  <!-- ===================== PLAN ===================== -->
+  <section>
+    <h2 class="eyebrow">El plan</h2>
+    <details class="plan">
+      <summary>Abrir la rutina completa</summary>
+      <div class="plan-cuerpo">
+
+        <h3>La semana</h3>
+        <table>
+          <tr><th>Qué</th><th>Cuánto</th></tr>
+          <tr><td>Sesión de fuerza</td><td>3 por semana, ~60 min</td></tr>
+          <tr><td>Pausas activas</td><td>cada 30-60 min de estar sentado</td></tr>
+          <tr><td>Actividad moderada</td><td>150 min por semana — caminar cuenta</td></tr>
+          <tr><td>Sueño</td><td>una sola almohada, baja y firme. No boca abajo</td></tr>
+        </table>
+
+        <h3>La sesión — 4 bloques, en este orden</h3>
+        <p><b>A · Cuello.</b> Isométrico con banda en 4 direcciones, 1 × 15 cada una. O sin banda:
+        isométrico lateral con la palma contra la cabeza, 60 s × 5 por lado. El cuello no se mueve.</p>
+        <p><b>B · Hombro y brazo.</b> Mancuerna de 2 kg, 15 repeticiones: encogimientos, press,
+        curl, remo inclinado, aperturas, pullover. <em>Es el bloque con la evidencia más fuerte.</em></p>
+        <p><b>C · Tronco.</b> Sentadillas, abdominales, extensión de espalda.</p>
+        <p><b>D · Estiramientos.</b> Trapecio superior, escalenos, elevador de la escápula,
+        apertura de libro. Al final, son el complemento. Nunca tirar de la cabeza con la mano.</p>
+
+        <h3>Todos los movimientos</h3>
+        <div class="galeria" id="galeria"></div>
+
+        <h3>La progresión</h3>
+        <table>
+          <tr><th>Semanas</th><th>Cuello</th><th>Mancuerna</th></tr>
+          <tr><td>1-2</td><td>isométrico suave con la mano</td><td>1 kg o sin peso</td></tr>
+          <tr><td>3-4</td><td>banda floja</td><td>1 kg</td></tr>
+          <tr><td>5-8</td><td>banda con tensión</td><td>2 kg</td></tr>
+          <tr><td>9-12</td><td>más tensión</td><td>2 kg — sostener</td></tr>
+        </table>
+        <p class="chico">Esta rampa no sale de ninguna fuente: es una decisión para poder empezar
+        solo. El protocolo publicado son las semanas 5 en adelante.</p>
+
+        <h3>El escritorio — configurar una vez</h3>
+        <ul>
+          <li>Pantalla a <b>50-100 cm</b> de los ojos</li>
+          <li>Borde superior de la pantalla <b>a la altura de los ojos o más abajo</b></li>
+          <li>Pantalla al frente: nunca más de <b>35°</b> al costado</li>
+          <li>Codos entre <b>90 y 120°</b>, pegados al cuerpo</li>
+          <li>Pies apoyados, rodillas a la altura de las caderas, espalda apoyada</li>
+        </ul>
+        <p><b>Ninguna postura aguanta mucho rato.</b> Cambiar de posición seguido importa más que
+        el ángulo exacto.</p>
+
+        <h3>Lo que no hay que hacer</h3>
+        <ul>
+          <li><b>Solo estiramientos</b> — es lo que la evidencia dice que no funciona</li>
+          <li>Collar cervical blando, salvo indicación médica</li>
+          <li>Reposo prolongado en cama</li>
+          <li>Depender de relajantes musculares</li>
+          <li>Ibuprofeno en las primeras 48 h de una lesión aguda</li>
+          <li>Frío o calor en contacto directo con la piel</li>
+          <li>Manejar o andar en bici si no podés mover el cuello</li>
+        </ul>
+
+        <p class="chico">Esto no reemplaza a un profesional. La Chartered Society of Physiotherapy
+        recomienda consultar a un fisioterapeuta antes de empezar cualquier rutina nueva. El
+        detalle completo, con la fuente de cada indicación, está en <code>contenido/plan.md</code>
+        del repositorio.</p>
+
+      </div>
+    </details>
+  </section>
+
+  <!-- ===================== CARGA ===================== -->
+  <section class="no-imprimir">
+    <h2 class="eyebrow">Cargar el día</h2>
+    <div class="panel">
+      <form id="form" autocomplete="off">
+        <div class="campo">
+          <label class="et" for="fecha">Fecha</label>
+          <input type="date" id="fecha" required>
+        </div>
+
+        <div class="campo">
+          <label class="et">Dolor de cuello — 0 nada, 10 lo peor imaginable</label>
+          <div class="escala" id="esc-dolor"></div>
+        </div>
+
+        <div class="campo">
+          <label class="et">¿Hiciste la sesión de fuerza? — el objetivo es 3 por semana</label>
+          <div class="toggle" id="tg-fuerza">
+            <button type="button" data-v="1">Sí</button>
+            <button type="button" data-v="0">No</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label class="et">Calidad del sueño de anoche — 1 pésima, 5 excelente</label>
+          <div class="escala" id="esc-sueno"></div>
+        </div>
+
+        <div class="campo">
+          <label class="et">Actividad física del día</label>
+          <div class="fila">
+            <input type="number" id="actividad" min="0" max="600" step="5" placeholder="0">
+            <span class="sub" style="margin:0">minutos de movimiento moderado — el objetivo semanal es 150</span>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label class="et">Pausas activas que hiciste hoy</label>
+          <div class="fila">
+            <input type="number" id="pausas" min="0" max="40" step="1" placeholder="0">
+            <span class="sub" style="margin:0">levantarte y mover el cuello, cada 30-60 min de estar sentado</span>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label class="et">¿Hubo dolor de cabeza?</label>
+          <div class="toggle" id="tg-cefalea">
+            <button type="button" data-v="1">Sí</button>
+            <button type="button" data-v="0">No</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label class="et" for="nota">Nota — opcional</label>
+          <textarea id="nota" placeholder="qué pasó, qué molestó, qué ayudó"></textarea>
+        </div>
+
+        <div class="acciones">
+          <button class="btn" type="submit">Guardar el día</button>
+          <button class="btn sec" type="button" id="btn-borrar-dia">Borrar este día</button>
+          <span class="aviso" id="aviso"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== GRÁFICO ===================== -->
+  <section>
+    <h2 class="eyebrow">Dolor en el tiempo</h2>
+    <div class="panel">
+      <svg class="grafico" id="grafico" viewBox="0 0 720 150" preserveAspectRatio="none" role="img" aria-label="Dolor diario en el tiempo"></svg>
+      <p class="leyenda" id="leyenda-grafico"></p>
+    </div>
+  </section>
+
+  <!-- ===================== REVISIÓN ===================== -->
+  <section>
+    <h2 class="eyebrow">Revisión</h2>
+    <div class="panel">
+      <div class="rev" id="rev"></div>
+      <div class="veredicto" id="veredicto"></div>
+    </div>
+  </section>
+
+  <!-- ===================== HITOS ===================== -->
+  <section>
+    <h2 class="eyebrow">Cuándo mirar los números</h2>
+    <div class="panel">
+      <ul class="hitos" id="hitos"></ul>
+      <p class="leyenda" style="margin-top:1rem">
+        Semana 6: St George's NHS dice que si no mejoró en 6 semanas hay que hablar con un
+        profesional. Semana 12: la mayoría de los casos se resuelve dentro de las 12 semanas.
+        Mes 12: es el horizonte del ensayo del que sale la dosis del plan.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== HISTORIAL ===================== -->
+  <section>
+    <h2 class="eyebrow">Historial</h2>
+    <div class="panel">
+      <div class="tabla-wrap"><table id="tabla"><tbody></tbody></table></div>
+      <div class="acciones no-imprimir">
+        <button class="btn sec" type="button" id="btn-csv">Exportar CSV</button>
+        <button class="btn sec" type="button" id="btn-json">Respaldo JSON</button>
+        <button class="btn sec" type="button" id="btn-importar">Restaurar respaldo</button>
+        <button class="btn sec" type="button" id="btn-imprimir">Imprimir</button>
+        <input type="file" id="file-importar" accept="application/json,.json" hidden>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ALARMA ===================== -->
+  <section>
+    <div class="alarma">
+      <h2>Parar y consultar ya</h2>
+      <p class="sub" style="color:var(--texto-suave);margin-top:.4rem">
+        Del folleto de Guardia de University Hospitals Sussex (NHS): llamar al médico o volver a
+        Guardia inmediatamente si aparece cualquiera de estas.
+      </p>
+      <ul>
+        <li>Pérdida de control de la vejiga o del intestino</li>
+        <li>Hormigueo en <strong>ambos</strong> brazos o <strong>ambas</strong> piernas</li>
+        <li>Adormecimiento en la zona genital o anal</li>
+        <li>Debilidad muscular, falta de equilibrio o dificultad para caminar</li>
+        <li>Disfunción sexual</li>
+        <li>Hormigueo o brazo frío (NHS.uk)</li>
+        <li>Mareo que aparece <strong>siempre</strong> con un ejercicio: pararlo y consultar</li>
+      </ul>
+    </div>
+  </section>
+
+  <p class="nota-pie">
+    El plan al que corresponde este registro está en <code>contenido/plan.md</code>, con la fuente
+    de cada indicación. Los datos viven en el <code>localStorage</code> de este navegador: si
+    limpiás los datos del navegador o abrís el archivo desde otra computadora, no van a estar.
+    El respaldo JSON es la única copia que sobrevive a eso.
+  </p>
+
+</div>
+
+<!-- ===================== AVISO DE PAUSA ===================== -->
+<div class="aviso-pausa no-imprimir" id="aviso-pausa" data-abierto="no" role="alert">
+  <span>Pasaron <b id="aviso-min">45</b> minutos — tocaría una pausa activa.</span>
+  <span class="ml"></span>
+  <button type="button" id="aviso-hacer">Hacerla ahora</button>
+  <button type="button" class="fantasma" id="aviso-luego">Más tarde</button>
+</div>
+
+<!-- ===================== RUNNER ===================== -->
+<div class="runner no-imprimir" id="runner" data-abierto="no" role="dialog" aria-modal="true" aria-labelledby="r-titulo">
+  <div class="runner-caja">
+    <div class="barra"><i id="r-barra"></i></div>
+    <p class="bloque" id="r-bloque"></p>
+    <h3 id="r-titulo"></h3>
+    <div class="fig-caja" id="r-fig"></div>
+    <p class="dosis" id="r-dosis"></p>
+    <div id="r-reloj-wrap" hidden><p class="reloj" id="r-reloj">0:00</p></div>
+    <p class="como" id="r-como"></p>
+    <div id="r-intro"></div>
+    <p class="cuidado" id="r-cuidado"></p>
+    <details class="fuente" id="r-fuente"><summary>De dónde sale</summary>
+      <p class="origen" id="r-origen"></p>
+    </details>
+    <div class="runner-pie">
+      <button class="btn" type="button" id="r-siguiente">Listo</button>
+      <button class="btn sec" type="button" id="r-atras">Atrás</button>
+      <button class="btn sec" type="button" id="r-salir">Salir</button>
+      <span class="paso" id="r-paso"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CLAVE = "cervicales.registro.v1";
+  var OBJETIVO_SEMANAL = 3;      // sesiones de fuerza por semana (protocolo Ylinen)
+  var OBJETIVO_MINUTOS = 150;    // minutos semanales de actividad moderada
+
+  // ---------- almacenamiento ----------
+  function leer(){
+    try{
+      var s = localStorage.getItem(CLAVE);
+      return s ? JSON.parse(s) : {};
+    }catch(e){ return {}; }
+  }
+  function guardar(d){
+    try{ localStorage.setItem(CLAVE, JSON.stringify(d)); return true; }
+    catch(e){ return false; }
+  }
+
+  var datos = leer();
+
+  // ---------- utilidades de fecha ----------
+  function hoyISO(){
+    var d = new Date();
+    return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+  }
+  function pad(n){ return (n<10?"0":"") + n; }
+  function aFecha(iso){
+    var p = iso.split("-");
+    return new Date(+p[0], +p[1]-1, +p[2]);
+  }
+  function sumarDias(iso, n){
+    var d = aFecha(iso); d.setDate(d.getDate()+n);
+    return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+  }
+  function diasEntre(a, b){
+    return Math.round((aFecha(b) - aFecha(a)) / 86400000);
+  }
+  function corto(iso){
+    var p = iso.split("-");
+    return p[2] + "/" + p[1];
+  }
+
+  // ---------- estado del formulario ----------
+  var estado = { dolor:null, fuerza:null, sueno:null, cefalea:null };
+
+  function construirEscala(cont, desde, hasta, campo){
+    cont.innerHTML = "";
+    for(var i=desde; i<=hasta; i++){
+      (function(v){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = v;
+        b.setAttribute("aria-pressed","false");
+        b.addEventListener("click", function(){
+          estado[campo] = (estado[campo] === v) ? null : v;
+          pintarEscala(cont, estado[campo]);
+        });
+        cont.appendChild(b);
+      })(i);
+    }
+  }
+  function pintarEscala(cont, valor){
+    var bs = cont.querySelectorAll("button");
+    for(var i=0;i<bs.length;i++){
+      bs[i].setAttribute("aria-pressed", String(Number(bs[i].textContent) === valor));
+    }
+  }
+  function construirToggle(cont, campo){
+    var bs = cont.querySelectorAll("button");
+    for(var i=0;i<bs.length;i++){
+      (function(b){
+        b.addEventListener("click", function(){
+          var v = Number(b.getAttribute("data-v"));
+          estado[campo] = (estado[campo] === v) ? null : v;
+          pintarToggle(cont, estado[campo]);
+        });
+      })(bs[i]);
+    }
+  }
+  function pintarToggle(cont, valor){
+    var bs = cont.querySelectorAll("button");
+    for(var i=0;i<bs.length;i++){
+      bs[i].setAttribute("aria-pressed", String(Number(bs[i].getAttribute("data-v")) === valor));
+    }
+  }
+
+  var escDolor = document.getElementById("esc-dolor");
+  var escSueno = document.getElementById("esc-sueno");
+  var tgFuerza = document.getElementById("tg-fuerza");
+  var tgCefalea = document.getElementById("tg-cefalea");
+
+  construirEscala(escDolor, 0, 10, "dolor");
+  construirEscala(escSueno, 1, 5, "sueno");
+  construirToggle(tgFuerza, "fuerza");
+  construirToggle(tgCefalea, "cefalea");
+
+  var inFecha = document.getElementById("fecha");
+  var inActividad = document.getElementById("actividad");
+  var inPausas = document.getElementById("pausas");
+  var inNota = document.getElementById("nota");
+  var aviso = document.getElementById("aviso");
+
+  function cargarEnFormulario(iso){
+    var e = datos[iso] || {};
+    estado.dolor   = (typeof e.dolor === "number") ? e.dolor : null;
+    estado.sueno   = (typeof e.sueno === "number") ? e.sueno : null;
+    estado.fuerza  = (typeof e.fuerza === "number") ? e.fuerza : null;
+    estado.cefalea = (typeof e.cefalea === "number") ? e.cefalea : null;
+    inActividad.value = (typeof e.actividad === "number") ? e.actividad : "";
+    inPausas.value    = (typeof e.pausas === "number") ? e.pausas : "";
+    inNota.value      = e.nota || "";
+    pintarEscala(escDolor, estado.dolor);
+    pintarEscala(escSueno, estado.sueno);
+    pintarToggle(tgFuerza, estado.fuerza);
+    pintarToggle(tgCefalea, estado.cefalea);
+  }
+
+  inFecha.value = hoyISO();
+  inFecha.max = hoyISO();
+  cargarEnFormulario(inFecha.value);
+  inFecha.addEventListener("change", function(){
+    if(!inFecha.value) return;
+    cargarEnFormulario(inFecha.value);
+    aviso.textContent = "";
+  });
+
+  // ---------- guardar ----------
+  document.getElementById("form").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var iso = inFecha.value;
+    if(!iso) return;
+
+    var e = {};
+    if(estado.dolor   !== null) e.dolor = estado.dolor;
+    if(estado.sueno   !== null) e.sueno = estado.sueno;
+    if(estado.fuerza  !== null) e.fuerza = estado.fuerza;
+    if(estado.cefalea !== null) e.cefalea = estado.cefalea;
+    if(inActividad.value !== "") e.actividad = Math.max(0, Number(inActividad.value));
+    if(inPausas.value !== "")    e.pausas = Math.max(0, Number(inPausas.value));
+    if(inNota.value.trim() !== "") e.nota = inNota.value.trim();
+
+    if(Object.keys(e).length === 0){
+      aviso.textContent = "No cargaste nada.";
+      return;
+    }
+    datos[iso] = e;
+    if(guardar(datos)){
+      aviso.textContent = "Guardado.";
+      setTimeout(function(){ aviso.textContent = ""; }, 2500);
+      pintarTodo();
+    }else{
+      aviso.textContent = "No se pudo guardar (el navegador bloquea el almacenamiento).";
+    }
+  });
+
+  document.getElementById("btn-borrar-dia").addEventListener("click", function(){
+    var iso = inFecha.value;
+    if(!datos[iso]){ aviso.textContent = "Ese día no tenía nada."; return; }
+    if(!confirm("¿Borrar el registro del " + iso + "?")) return;
+    delete datos[iso];
+    guardar(datos);
+    cargarEnFormulario(iso);
+    aviso.textContent = "Borrado.";
+    pintarTodo();
+  });
+
+  // ---------- cálculos ----------
+  function fechasOrdenadas(){
+    return Object.keys(datos).sort();
+  }
+
+  function calcular(){
+    var fs = fechasOrdenadas();
+    var r = {
+      dias: fs.length,
+      inicio: fs.length ? fs[0] : null,
+      sesiones: 0,
+      diasTranscurridos: 0,
+      semanas: 0,
+      adherencia: null,
+      sesionesPorSemana: null,
+      dolorUlt7: null,
+      dolorPrimeras7: null,
+      sueno7: null,
+      minutos7: null,
+      cefalea7: null,
+      racha: 0
+    };
+    if(!fs.length) return r;
+
+    var i;
+    for(i=0;i<fs.length;i++){ if(datos[fs[i]].fuerza === 1) r.sesiones++; }
+
+    r.diasTranscurridos = diasEntre(r.inicio, hoyISO()) + 1;
+    if(r.diasTranscurridos < 1) r.diasTranscurridos = 1;
+    r.semanas = r.diasTranscurridos / 7;
+
+    var esperadas = r.semanas * OBJETIVO_SEMANAL;
+    if(esperadas > 0){
+      r.adherencia = Math.round((r.sesiones / esperadas) * 100);
+      r.sesionesPorSemana = r.sesiones / r.semanas;
+    }
+
+    // ventanas de 7 días hacia atrás desde hoy
+    var desde7 = sumarDias(hoyISO(), -6);
+    var dol=[], sue=[], min=0, cef=0, minDias=0;
+    for(i=0;i<fs.length;i++){
+      if(fs[i] < desde7) continue;
+      var e = datos[fs[i]];
+      if(typeof e.dolor === "number") dol.push(e.dolor);
+      if(typeof e.sueno === "number") sue.push(e.sueno);
+      if(typeof e.actividad === "number"){ min += e.actividad; minDias++; }
+      if(e.cefalea === 1) cef++;
+    }
+    if(dol.length) r.dolorUlt7 = promedio(dol);
+    if(sue.length) r.sueno7 = promedio(sue);
+    if(minDias) r.minutos7 = min;
+    r.cefalea7 = cef;
+
+    // primeras 7 fechas con dolor, para comparar
+    var prim = [];
+    for(i=0;i<fs.length && prim.length<7;i++){
+      if(typeof datos[fs[i]].dolor === "number") prim.push(datos[fs[i]].dolor);
+    }
+    if(prim.length >= 3) r.dolorPrimeras7 = promedio(prim);
+
+    // racha de días consecutivos con algún registro, terminando hoy o ayer
+    var cursor = hoyISO();
+    if(!datos[cursor]) cursor = sumarDias(cursor, -1);
+    while(datos[cursor]){ r.racha++; cursor = sumarDias(cursor, -1); }
+
+    return r;
+  }
+  function promedio(a){
+    var s=0; for(var i=0;i<a.length;i++) s+=a[i];
+    return s/a.length;
+  }
+  function un(n){ return (Math.round(n*10)/10).toString().replace(".", ","); }
+
+  // ---------- pintar métricas ----------
+  function pintarMetricas(r){
+    var cont = document.getElementById("metricas");
+    var m = [];
+
+    if(r.adherencia === null){
+      m.push(tarjeta("—", "Adherencia", "Cargá el primer día para empezar a medir.", true));
+    }else{
+      var pieAdh = r.sesiones + " sesiones en " + un(r.semanas) + " semanas · " +
+                   un(r.sesionesPorSemana) + " por semana. En el ensayo del que sale la dosis " +
+                   "la gente hizo 1,9 y funcionó igual.";
+      m.push(tarjeta(r.adherencia + "%", "Adherencia a la fuerza", pieAdh, r.adherencia < 50));
+    }
+
+    if(r.dolorUlt7 === null){
+      m.push(tarjeta("—", "Dolor · últimos 7 días", "Sin datos de dolor esta semana.", true));
+    }else{
+      var pieDolor = "Promedio de " + un(r.dolorUlt7) + " sobre 10.";
+      if(r.dolorPrimeras7 !== null){
+        var dif = r.dolorPrimeras7 - r.dolorUlt7;
+        pieDolor += " Al principio era " + un(r.dolorPrimeras7) + " — " +
+          (Math.abs(dif) < 0.25 ? "igual" : (dif > 0 ? "bajó " + un(dif) : "subió " + un(-dif))) + ".";
+      }
+      m.push(tarjeta(un(r.dolorUlt7), "Dolor · últimos 7 días", pieDolor, false));
+    }
+
+    m.push(tarjeta(
+      r.sueno7 === null ? "—" : un(r.sueno7),
+      "Sueño · últimos 7 días",
+      r.sueno7 === null ? "Sin datos." : "Sobre 5. Es uno de los dos predictores de dolor futuro.",
+      r.sueno7 === null
+    ));
+
+    m.push(tarjeta(
+      r.minutos7 === null ? "—" : String(r.minutos7),
+      "Minutos · últimos 7 días",
+      r.minutos7 === null ? "Sin datos." :
+        (r.minutos7 >= OBJETIVO_MINUTOS ? "Objetivo de 150 cumplido." :
+         "Faltan " + (OBJETIVO_MINUTOS - r.minutos7) + " para los 150 semanales."),
+      r.minutos7 === null
+    ));
+
+    m.push(tarjeta(String(r.racha), "Días seguidos registrando",
+      r.dias + " días cargados en total.", r.racha === 0));
+
+    m.push(tarjeta(
+      r.cefalea7 === null ? "—" : String(r.cefalea7),
+      "Días con cefalea · 7 días",
+      "Es el desenlace principal del ensayo de cefalea cervicogénica.",
+      !r.cefalea7));
+
+    cont.innerHTML = m.join("");
+  }
+  function tarjeta(n, et, pie, tenue){
+    return '<div class="metrica"><div class="n' + (tenue?' tenue':'') + '">' + esc(n) +
+           '</div><div class="et">' + esc(et) + '</div><div class="pie">' + esc(pie) + '</div></div>';
+  }
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // ---------- gráfico ----------
+  function pintarGrafico(){
+    var svg = document.getElementById("grafico");
+    var ley = document.getElementById("leyenda-grafico");
+    var fs = fechasOrdenadas().filter(function(f){ return typeof datos[f].dolor === "number"; });
+
+    if(fs.length < 2){
+      svg.innerHTML = '<text x="360" y="78" text-anchor="middle" fill="#8a8a8a" ' +
+        'font-family="Inter,sans-serif" font-size="13">Cargá al menos dos días con dolor para ver la curva</text>';
+      ley.textContent = "";
+      return;
+    }
+
+    var W = 720, H = 150, mL = 26, mR = 8, mT = 12, mB = 20;
+    var ancho = W - mL - mR, alto = H - mT - mB;
+    var n = fs.length;
+    var x = function(i){ return mL + (n === 1 ? ancho/2 : (i/(n-1)) * ancho); };
+    var y = function(v){ return mT + alto - (v/10) * alto; };
+
+    var partes = [];
+    // grilla
+    [0,5,10].forEach(function(v){
+      partes.push('<line x1="'+mL+'" y1="'+y(v)+'" x2="'+(W-mR)+'" y2="'+y(v)+
+                  '" stroke="#262626" stroke-width="1"/>');
+      partes.push('<text x="'+(mL-6)+'" y="'+(y(v)+4)+'" text-anchor="end" fill="#8a8a8a" ' +
+                  'font-family="IBM Plex Mono,monospace" font-size="10">'+v+'</text>');
+    });
+    // línea
+    var d = "";
+    for(var i=0;i<n;i++){
+      d += (i===0 ? "M" : "L") + x(i).toFixed(1) + " " + y(datos[fs[i]].dolor).toFixed(1) + " ";
+    }
+    partes.push('<path d="'+d.trim()+'" fill="none" stroke="#ff7a00" stroke-width="2" ' +
+                'stroke-linejoin="round" stroke-linecap="round"/>');
+    // puntos: relleno si ese día hubo sesión de fuerza
+    for(i=0;i<n;i++){
+      var hubo = datos[fs[i]].fuerza === 1;
+      partes.push('<circle cx="'+x(i).toFixed(1)+'" cy="'+y(datos[fs[i]].dolor).toFixed(1)+
+                  '" r="'+(hubo?3.5:2.5)+'" fill="'+(hubo?"#ff7a00":"#0a0a0a")+
+                  '" stroke="#ff7a00" stroke-width="1.5"><title>'+esc(fs[i])+': dolor '+
+                  datos[fs[i]].dolor+(hubo?" · con sesión":"")+'</title></circle>');
+    }
+    // etiquetas de fecha
+    partes.push('<text x="'+mL+'" y="'+(H-5)+'" fill="#8a8a8a" font-family="IBM Plex Mono,monospace" ' +
+                'font-size="10">'+esc(corto(fs[0]))+'</text>');
+    partes.push('<text x="'+(W-mR)+'" y="'+(H-5)+'" text-anchor="end" fill="#8a8a8a" ' +
+                'font-family="IBM Plex Mono,monospace" font-size="10">'+esc(corto(fs[n-1]))+'</text>');
+
+    svg.innerHTML = partes.join("");
+    ley.textContent = "Punto lleno = ese día hiciste la sesión de fuerza. " + n + " días con dolor registrado.";
+  }
+
+  // ---------- hitos ----------
+  function pintarHitos(r){
+    var ul = document.getElementById("hitos");
+    if(!r.inicio){
+      ul.innerHTML = '<li class="vacio">Los hitos se calculan desde tu primer día registrado.</li>';
+      return;
+    }
+    var hs = [
+      {d:42,  t:"Semana 6 — revisar si el dolor bajó. Si no, hablar con un profesional (St George's NHS)."},
+      {d:84,  t:"Semana 12 — fin del período de instalación del hábito. La mayoría de los casos se resuelve acá (St George's NHS)."},
+      {d:365, t:"Mes 12 — horizonte del ensayo del que sale la dosis del plan (JAMA 2003)."}
+    ];
+    var hoy = hoyISO();
+    ul.innerHTML = hs.map(function(h){
+      var fecha = sumarDias(r.inicio, h.d);
+      var faltan = diasEntre(hoy, fecha);
+      var cuando = faltan > 0 ? ("en " + faltan + " d") : (faltan === 0 ? "hoy" : "pasó");
+      return '<li class="' + (faltan < 0 ? "pasado" : "") + '"><span class="cuando">' +
+             esc(cuando) + '</span><span>' + esc(fecha) + ' — ' + esc(h.t) + '</span></li>';
+    }).join("");
+  }
+
+  // ---------- tabla ----------
+  function pintarTabla(){
+    var tb = document.querySelector("#tabla tbody");
+    var fs = fechasOrdenadas().reverse();
+    if(!fs.length){
+      tb.innerHTML = '<tr><td class="vacio">Todavía no hay nada cargado.</td></tr>';
+      return;
+    }
+    var filas = ['<tr><th>Fecha</th><th>Dolor</th><th>Fuerza</th><th>Sueño</th>' +
+                 '<th>Min.</th><th>Pausas</th><th>Cefalea</th><th>Nota</th></tr>'];
+    for(var i=0;i<fs.length;i++){
+      var e = datos[fs[i]];
+      filas.push('<tr>' +
+        '<td class="num">' + esc(fs[i]) + '</td>' +
+        '<td class="num">' + (typeof e.dolor === "number" ? e.dolor : "—") + '</td>' +
+        '<td class="' + (e.fuerza === 1 ? "si" : "no") + '">' +
+          (e.fuerza === 1 ? "sí" : (e.fuerza === 0 ? "no" : "—")) + '</td>' +
+        '<td class="num">' + (typeof e.sueno === "number" ? e.sueno : "—") + '</td>' +
+        '<td class="num">' + (typeof e.actividad === "number" ? e.actividad : "—") + '</td>' +
+        '<td class="num">' + (typeof e.pausas === "number" ? e.pausas : "—") + '</td>' +
+        '<td class="' + (e.cefalea === 1 ? "si" : "no") + '">' +
+          (e.cefalea === 1 ? "sí" : (e.cefalea === 0 ? "no" : "—")) + '</td>' +
+        '<td class="nota">' + esc(e.nota || "") + '</td>' +
+      '</tr>');
+    }
+    tb.innerHTML = filas.join("");
+  }
+
+  // ---------- exportar ----------
+  function bajar(nombre, contenido, tipo){
+    var blob = new Blob([contenido], {type: tipo + ";charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = nombre;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+
+  document.getElementById("btn-csv").addEventListener("click", function(){
+    var fs = fechasOrdenadas();
+    if(!fs.length){ alert("No hay nada para exportar."); return; }
+    var lineas = ["fecha,dolor,sesion_fuerza,sueno,minutos_actividad,pausas,cefalea,nota"];
+    for(var i=0;i<fs.length;i++){
+      var e = datos[fs[i]];
+      var nota = (e.nota || "").replace(/"/g, '""');
+      lineas.push([
+        fs[i],
+        typeof e.dolor === "number" ? e.dolor : "",
+        e.fuerza === 1 ? "1" : (e.fuerza === 0 ? "0" : ""),
+        typeof e.sueno === "number" ? e.sueno : "",
+        typeof e.actividad === "number" ? e.actividad : "",
+        typeof e.pausas === "number" ? e.pausas : "",
+        e.cefalea === 1 ? "1" : (e.cefalea === 0 ? "0" : ""),
+        '"' + nota + '"'
+      ].join(","));
+    }
+    bajar("registro-cuello-" + hoyISO() + ".csv", "﻿" + lineas.join("\r\n"), "text/csv");
+  });
+
+  document.getElementById("btn-json").addEventListener("click", function(){
+    bajar("respaldo-cuello-" + hoyISO() + ".json", JSON.stringify(datos, null, 2), "application/json");
+  });
+
+  var fileImportar = document.getElementById("file-importar");
+  document.getElementById("btn-importar").addEventListener("click", function(){ fileImportar.click(); });
+  fileImportar.addEventListener("change", function(){
+    var f = fileImportar.files && fileImportar.files[0];
+    if(!f) return;
+    var lector = new FileReader();
+    lector.onload = function(){
+      var nuevo;
+      try{ nuevo = JSON.parse(lector.result); }
+      catch(e){ alert("Ese archivo no es un respaldo válido."); return; }
+      if(!nuevo || typeof nuevo !== "object" || Array.isArray(nuevo)){
+        alert("Ese archivo no es un respaldo válido."); return;
+      }
+      var claves = Object.keys(nuevo);
+      if(!claves.every(function(k){ return /^\d{4}-\d{2}-\d{2}$/.test(k); })){
+        alert("Ese archivo no tiene el formato del respaldo."); return;
+      }
+      if(!confirm("Se van a fusionar " + claves.length + " días con lo que ya tenés. " +
+                  "Si un día está en los dos, gana el del respaldo. ¿Seguir?")) return;
+      for(var i=0;i<claves.length;i++) datos[claves[i]] = nuevo[claves[i]];
+      guardar(datos);
+      cargarEnFormulario(inFecha.value);
+      pintarTodo();
+      alert("Restaurado.");
+    };
+    lector.readAsText(f);
+    fileImportar.value = "";
+  });
+
+  document.getElementById("btn-imprimir").addEventListener("click", function(){ window.print(); });
+
+  // =========================================================================
+  // FIGURAS — un muñeco articulado por ejercicio
+  // Esqueleto 2D con cadera, tronco, cuello, cabeza con cara, hombros, codos,
+  // manos, rodillas y pies. Cada ejercicio se define con dos o tres posturas
+  // (angulos de cada hueso) y una secuencia de fases; el motor interpola entre
+  // posturas y redibuja. Las manos pueden ir a un punto del cuerpo ("frente",
+  // "nuca", "sien1"...) y el codo se resuelve solo (cinematica inversa).
+  // Angulos absolutos en grados: 0 = arriba, 90 = derecha, 180 = abajo.
+  // Sin imagenes externas: todo tiene que andar sin internet.
+  // =========================================================================
+  var FIG = (function(){
+    var W = 240;
+    var L = {torso:50, cuello:8, cabeza:13, brazo:28, ante:29, muslo:36, pierna:35, pie:11};
+    var ANCHO = {torso:24, torsoF:32, cuello:9, brazo:10, pierna:12};
+
+    function v(a,l){ var r = a*Math.PI/180; return [Math.sin(r)*l, -Math.cos(r)*l]; }
+    function suma(p,q){ return [p[0]+q[0], p[1]+q[1]]; }
+    function n(x){ return Math.round(x*10)/10; }
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function suave(t){ return t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; }
+
+    var BASE = {x:120, y:107, tr:0, tl:1, cu:0, ca:0, hx:0, gi:0, fl:0, hom:0,
+                bc1:178, an1:178, bc2:182, an2:182, mu1:180, pi1:180, mu2:180, pi2:180,
+                muslo:1, fz:0, th:0};
+
+    // ---------- esqueleto ----------
+    function esqueleto(P, d){
+      var fr = d.vista === "frente", f = d.mira || 1, J = {};
+      J.cad = [P.x, P.y];
+      var tl = L.torso*P.tl;
+      J.cue = suma(J.cad, v(P.tr, tl));
+      var hom = suma(J.cad, v(P.tr, tl*0.86 + P.hom));
+      var perp = v(P.tr+90, 1);
+      function lado(p, k){ return suma(p, [perp[0]*k, perp[1]*k]); }
+      if(fr){
+        J.h1 = lado(hom, 18); J.h2 = lado(hom, -18);
+        J.c1 = lado(J.cad, 8); J.c2 = lado(J.cad, -8);
+      }else{
+        J.h1 = J.h2 = hom; J.c1 = J.c2 = J.cad;
+      }
+      J.nuc = suma(suma(J.cue, v(P.cu, L.cuello)), [P.hx, 0]);
+      J.cab = suma(J.nuc, v(P.ca, L.cabeza - 1));
+      J.cara = fr ? P.ca : P.ca + 90*f;
+      J.frente = suma(J.cab, v(P.ca + 90*f, L.cabeza + 4));
+      J.nuca   = suma(J.cab, v(P.ca - 90*f, L.cabeza + 4));
+      J.coron  = suma(J.cab, v(P.ca, L.cabeza + 4));
+      J.sien1  = suma(J.cab, v(P.ca + 90, L.cabeza + 4));
+      J.sien2  = suma(J.cab, v(P.ca - 90, L.cabeza + 4));
+      J.mitcue = suma(J.cue, v(P.cu, L.cuello*.5));
+      J.pecho  = fr ? suma(J.cad, v(P.tr, tl*.66)) : suma(suma(J.cad, v(P.tr, tl*.66)), v(P.tr + 90*f, 6));
+      J.clav1  = suma(lado(J.cue, 8), v(P.tr, -6));
+      J.clav2  = suma(lado(J.cue, -8), v(P.tr, -6));
+      J.ombro1 = J.h1; J.ombro2 = J.h2;
+      var ml = L.muslo*P.muslo;
+      J.ro1 = suma(J.c1, v(P.mu1, ml)); J.to1 = suma(J.ro1, v(P.pi1, L.pierna));
+      J.ro2 = suma(J.c2, v(P.mu2, ml)); J.to2 = suma(J.ro2, v(P.pi2, L.pierna));
+      if(fr){
+        J.pp1 = suma(J.to1, [5, 2]); J.pp2 = suma(J.to2, [-5, 2]);
+      }else{
+        J.pp1 = suma(J.to1, v(P.pi1 - 90*f, L.pie)); J.pp2 = suma(J.to2, v(P.pi2 - 90*f, L.pie));
+      }
+      brazo(J, P, d, 1); brazo(J, P, d, 2);
+      return J;
+    }
+    // codo resuelto por cinematica inversa cuando la mano tiene un destino
+    function brazo(J, P, d, k){
+      var S = J["h"+k], a = L.brazo, b = L.ante;
+      if(P["m"+k+"x"] !== undefined){
+        var T = [P["m"+k+"x"], P["m"+k+"y"]];
+        var dx = T[0]-S[0], dy = T[1]-S[1], dist = Math.sqrt(dx*dx + dy*dy);
+        dist = Math.max(Math.abs(a-b) + .5, Math.min(a + b - .5, dist));
+        var base = Math.atan2(dy, dx);
+        var off = Math.acos((a*a + dist*dist - b*b)/(2*a*dist));
+        var ang = base + (d["codo"+k] || 1)*off;
+        var E = [S[0] + a*Math.cos(ang), S[1] + a*Math.sin(ang)];
+        var ex = T[0]-E[0], ey = T[1]-E[1], le = Math.sqrt(ex*ex + ey*ey) || 1;
+        J["co"+k] = E;
+        J["ma"+k] = [E[0] + ex/le*b, E[1] + ey/le*b];
+      }else{
+        J["co"+k] = suma(S, v(P["bc"+k], a));
+        J["ma"+k] = suma(J["co"+k], v(P["an"+k], b));
+      }
+    }
+    // resuelve los destinos de las manos ("frente", "nuca"...) en cada postura
+    function resolver(d){
+      if(d._K) return d._K;
+      d._K = d.poses.map(function(p){
+        var P = {}, k;
+        for(k in BASE) P[k] = BASE[k];
+        for(k in p) P[k] = p[k];
+        var J0 = esqueleto(P, d);
+        [1,2].forEach(function(i){
+          var m = P["m"+i];
+          if(!m) return;
+          var pt = typeof m[0] === "string" ? suma(J0[m[0]], [m[1]||0, m[2]||0]) : m;
+          P["m"+i+"x"] = pt[0]; P["m"+i+"y"] = pt[1];
+        });
+        // apoyar el tobillo en un punto fijo del piso (sentadilla, remo)
+        if(P.ancla){
+          var J1 = esqueleto(P, d);
+          var dx = P.ancla[0] - J1.to1[0], dy = P.ancla[1] - J1.to1[1];
+          P.x += dx; P.y += dy;
+          ["m1x","m2x"].forEach(function(q){ if(P[q] !== undefined) P[q] += dx; });
+          ["m1y","m2y"].forEach(function(q){ if(P[q] !== undefined) P[q] += dy; });
+        }
+        return P;
+      });
+      return d._K;
+    }
+    function mezcla(A, B, t){
+      var P = {}, k;
+      for(k in A){
+        P[k] = (typeof A[k] === "number" && typeof B[k] === "number") ? lerp(A[k], B[k], t) : A[k];
+      }
+      return P;
+    }
+
+    // ---------- dibujo ----------
+    function linea(p, q, w, cls){
+      return '<line class="'+cls+'" x1="'+n(p[0])+'" y1="'+n(p[1])+'" x2="'+n(q[0])+'" y2="'+n(q[1])+
+             '" stroke-width="'+w+'"/>';
+    }
+    // cada pieza lleva un contorno del color del fondo: donde se superpone
+    // con otra se ve el corte y el muñeco no se vuelve una mancha
+    function hueso(pts, w, cls){
+      var s = "", i;
+      if(cls !== "f-fant") for(i=0;i<pts.length-1;i++) s += linea(pts[i], pts[i+1], w+5, "f-borde");
+      for(i=0;i<pts.length-1;i++) s += linea(pts[i], pts[i+1], w, cls);
+      return s;
+    }
+    function circulo(c, r, cls){
+      return '<circle class="'+cls+'" cx="'+n(c[0])+'" cy="'+n(c[1])+'" r="'+n(r)+'"/>';
+    }
+    function pesa(J, k, d){
+      var M = J["ma"+k], C = J["co"+k];
+      if(d.pesaVista === "barra"){
+        var ang = Math.atan2(M[1]-C[1], M[0]-C[0]) + Math.PI/2;
+        var u = [Math.cos(ang)*8, Math.sin(ang)*8];
+        var p1 = [M[0]-u[0], M[1]-u[1]], p2 = [M[0]+u[0], M[1]+u[1]];
+        return linea(p1, p2, 4, "f-pesa") + circulo(p1, 4.5, "f-pesa-disco") + circulo(p2, 4.5, "f-pesa-disco");
+      }
+      return circulo(M, 7.5, "f-pesa-disco") + circulo(M, 3, "f-pesa");
+    }
+    function cara(J, P, d){
+      var c = J.cab, s = "";
+      if(d.vista === "frente"){
+        var px = v(P.ca + 90, 1), dn = v(P.ca + 180, 1);
+        var en = function(x, y){ return [c[0] + px[0]*x + dn[0]*y, c[1] + px[1]*x + dn[1]*y]; };
+        [-5, 5].forEach(function(x0){
+          var x = x0 + P.gi*7;
+          if(Math.abs(x) < 10.5) s += circulo(en(x, -1 + P.fl*5), 1.7, "f-ojo");
+        });
+        if(Math.abs(P.gi) > .15) s += circulo(en(P.gi*11.5, 3 + P.fl*5), 2.2, "f-nariz");
+        var bx = P.gi*8;
+        if(Math.abs(bx) < 9) s += linea(en(bx-3, 7 + P.fl*4), en(bx+3, 7 + P.fl*4), 1.6, "f-boca");
+        return s;
+      }
+      var f = d.mira || 1;
+      var adel = v(J.cara, 1), arr = v(P.ca, 1);
+      var ojo = [c[0] + adel[0]*6 + arr[0]*3, c[1] + adel[1]*6 + arr[1]*3];
+      s += circulo(ojo, 1.8, "f-ojo");
+      var b1 = [c[0] + adel[0]*11.5 + arr[0]*3, c[1] + adel[1]*11.5 + arr[1]*3];
+      var b2 = [c[0] + adel[0]*11.5 - arr[0]*3, c[1] + adel[1]*11.5 - arr[1]*3];
+      var pu = [c[0] + adel[0]*17 - arr[0]*1, c[1] + adel[1]*17 - arr[1]*1];
+      s += '<polygon class="f-nariz-p" points="'+n(b1[0])+','+n(b1[1])+' '+n(pu[0])+','+n(pu[1])+' '+n(b2[0])+','+n(b2[1])+'"/>';
+      if(d.mirada){
+        var lm = typeof d.mirada === "number" ? d.mirada : 46;
+        var lejos = [ojo[0] + adel[0]*lm, ojo[1] + adel[1]*lm];
+        s += linea([ojo[0]+adel[0]*14, ojo[1]+adel[1]*14], lejos, 1.4, "f-mirada");
+      }
+      return s;
+    }
+    function cuerpo(J, P, d, fantasma){
+      var fr = d.vista === "frente";
+      var m = d.mueve || [];
+      function col(parte, def){
+        if(fantasma) return "f-fant";
+        return m.indexOf(parte) >= 0 ? "f-mueve" : def;
+      }
+      var s = "";
+      var lejos = fr ? "f-cerca" : "f-lejos";
+      // atras: brazo y pierna del lado lejano (de perfil)
+      s += hueso([J.c2, J.ro2, J.to2, J.pp2], ANCHO.pierna, col("pierna2", lejos));
+      if(!fr){
+        s += hueso([J.h2, J.co2, J.ma2], ANCHO.brazo, col("brazo2", "f-lejos"));
+        s += circulo(J.ma2, 5.5, col("mano2", "f-lejos"));
+      }
+      if(fr) s += hueso([J.c1, J.ro1, J.to1, J.pp1], ANCHO.pierna, col("pierna1", "f-cerca"));
+      // tronco
+      var tro = col("tronco", "f-tronco");
+      var arriba = suma(J.cad, v(P.tr, L.torso*P.tl*.84));
+      s += hueso([J.cad, arriba], fr ? ANCHO.torsoF : ANCHO.torso, tro);
+      if(fr) s += hueso([J.h2, J.h1], 13, col("hombros", tro));
+      // cuello y cabeza
+      s += hueso([J.cue, J.nuc], ANCHO.cuello, col("cuello", "f-tronco"));
+      if(d.tension && !fantasma && P.fz > .02){
+        s += '<circle class="f-tension" cx="'+n(J.mitcue[0])+'" cy="'+n(J.mitcue[1])+'" r="'+n(5+6*P.fz)+
+             '" style="opacity:'+n(.15 + .55*P.fz)+'"/>';
+      }
+      if(!fantasma) s += '<circle class="f-borde-c" cx="'+n(J.cab[0])+'" cy="'+n(J.cab[1])+'" r="'+(L.cabeza+2.5)+'"/>';
+      s += circulo(J.cab, L.cabeza, col("cabeza", "f-cabeza"));
+      if(!fantasma) s += cara(J, P, d);
+      // adelante
+      if(!fr) s += hueso([J.c1, J.ro1, J.to1, J.pp1], ANCHO.pierna, col("pierna1", "f-cerca"));
+      if(fr){
+        s += hueso([J.h2, J.co2, J.ma2], ANCHO.brazo, col("brazo2", "f-cerca"));
+        if(d.pesa2 && !fantasma) s += pesa(J, 2, d);
+        s += circulo(J.ma2, 5.5, col("mano2", "f-cerca"));
+      }else if(d.pesa2 && !fantasma) s += pesa(J, 2, d);
+      s += hueso([J.h1, J.co1, J.ma1], ANCHO.brazo, col("brazo1", "f-cerca"));
+      if(d.pesa1 && !fantasma) s += pesa(J, 1, d);
+      s += circulo(J.ma1, 5.5, col("mano1", "f-cerca"));
+      return s;
+    }
+
+    // ---------- flechas, recorridos y carteles ----------
+    function punta(p, q, cls){
+      var a = Math.atan2(q[1]-p[1], q[0]-p[0]);
+      var l = 7, w = 4.5;
+      var b = [q[0] - Math.cos(a)*l, q[1] - Math.sin(a)*l];
+      var o = [-Math.sin(a)*w, Math.cos(a)*w];
+      return '<polygon class="'+(cls||"f-punta")+'" points="'+n(q[0])+','+n(q[1])+' '+n(b[0]+o[0])+','+n(b[1]+o[1])+
+             ' '+n(b[0]-o[0])+','+n(b[1]-o[1])+'"/>';
+    }
+    function flecha(p, q, op){
+      var a = Math.atan2(q[1]-p[1], q[0]-p[0]);
+      var q2 = [q[0] - Math.cos(a)*5, q[1] - Math.sin(a)*5];
+      return '<g style="opacity:'+n(op === undefined ? 1 : op)+'">' + linea(p, q2, 3, "f-flecha") + punta(p, q) + '</g>';
+    }
+    function recorrido(d){
+      if(d._ruta !== undefined) return d._ruta;
+      d._ruta = "";
+      if(!d.traza) return "";
+      var K = resolver(d), s = "";
+      d.traza.forEach(function(tz){
+        var pts = [], i, A = K[tz[1]], B = K[tz[2]];
+        for(i=0;i<=16;i++){
+          var J = esqueleto(mezcla(A, B, suave(i/16)), d);
+          pts.push(J[tz[0]]);
+        }
+        var path = "M" + pts.map(function(p){ return n(p[0]) + " " + n(p[1]); }).join(" L");
+        s += '<path class="f-ruta" d="'+path+'"/>' + punta(pts[pts.length-3], pts[pts.length-1], "f-ruta-punta");
+      });
+      d._ruta = s;
+      return s;
+    }
+    function X(x, d){ return d.espejo ? W - x : x; }
+    // la caja tiene 20 de margen a cada lado para los carteles; zoom acerca
+    // la camara en los ejercicios acostados, que si no quedan chiquitos
+    function caja(d){
+      var z = d.zoom || [120, 102, 1], s = z[2];
+      return [z[0] - 140/s, z[1] - 104/s, 280/s, 208/s];
+    }
+    function ancla(J, a){ return typeof a === "string" ? J[a] : a; }
+    function cartel(J, nt, d){
+      var p = nt.a ? ancla(J, nt.a) : null, t = nt.p;
+      var anchor = nt.al || (p && t[0] < p[0] ? "end" : "start");
+      if(d.espejo) anchor = anchor === "start" ? "end" : anchor === "end" ? "start" : "middle";
+      var tx = X(t[0], d), s = "";
+      if(p && !nt.sinLinea){
+        var px = X(p[0], d);
+        var lx = anchor === "start" ? tx - 3 : anchor === "end" ? tx + 3 : tx;
+        s += '<line class="f-guia" x1="'+n(lx)+'" y1="'+n(t[1]-3)+'" x2="'+n(px)+'" y2="'+n(p[1])+'"/>';
+        s += '<circle class="f-guia-pt" cx="'+n(px)+'" cy="'+n(p[1])+'" r="1.8"/>';
+      }
+      var z = (d.zoom || [0,0,1])[2];
+      s += '<text class="f-nota'+(nt.fuerte ? " fuerte" : "")+'" x="'+n(tx)+'" y="'+n(t[1])+'" text-anchor="'+anchor+
+           '" style="font-size:'+n(9.5/z)+'px">';
+      [].concat(nt.t).forEach(function(l, i){
+        if(d.espejo) l = l.replace(/→|←/g, function(c){ return c === "→" ? "←" : "→"; });
+        s += '<tspan x="'+n(tx)+'" dy="'+(i ? n(10.5/z) : "0")+'">'+esc(l)+'</tspan>';
+      });
+      return s + '</text>';
+    }
+
+    // ---------- estado en el tiempo ----------
+    function estado(d, seg, quieto){
+      var K = resolver(d), F = d.fases;
+      if(quieto){
+        var iq = d.quieto !== undefined ? d.quieto : F[0][0];
+        return {P: K[iq], fase: ""};
+      }
+      var total = 0, i;
+      for(i=0;i<F.length;i++) total += F[i][1];
+      var t = seg % total, prev = F[F.length-1][0];
+      for(i=0;i<F.length;i++){
+        if(t < F[i][1]){
+          return {P: mezcla(K[prev], K[F[i][0]], suave(t / F[i][1])), fase: F[i][2] || ""};
+        }
+        t -= F[i][1];
+        prev = F[i][0];
+      }
+      return {P: K[prev], fase: ""};
+    }
+    function dibujar(d, seg, quieto){
+      var e = estado(d, seg, quieto), P = e.P;
+      var J = d.custom ? null : esqueleto(P, d);
+      var geo = "";
+      if(d.props) geo += d.props(P);
+      if(!d.custom && d.fantasma !== false && !quieto){
+        var K = resolver(d);
+        geo += '<g class="f-fant-g">' + cuerpo(esqueleto(K[d.fantasma || 0], d), K[d.fantasma || 0], d, true) + '</g>';
+      }
+      geo += recorrido(d);
+      geo += d.custom ? d.custom(P) : cuerpo(J, P, d, false);
+      if(d.flechas) geo += d.flechas(J, P);
+      var txt = "";
+      if(d.notas) d.notas.forEach(function(nt){ txt += cartel(J, nt, d); });
+      if(e.fase){
+        var c = caja(d);
+        txt += '<text class="f-fase" x="'+n(c[0] + c[2]/2)+'" y="'+n(c[1] + c[3] - 6*c[2]/280)+'" text-anchor="middle" ' +
+               'style="font-size:'+n(10.5*c[2]/280)+'px">' + esc(e.fase.toUpperCase()) + '</text>';
+      }
+      return (d.espejo ? '<g transform="translate('+W+',0) scale(-1,1)">' + geo + '</g>' : geo) + txt;
+    }
+
+    // ---------- utileria ----------
+    var PISO = 182;
+    function piso(y){ return '<line class="f-piso" x1="14" y1="'+(y||PISO)+'" x2="226" y2="'+(y||PISO)+'"/>'; }
+    function banqueta(x){
+      x = x || 120;
+      return piso() + '<rect class="f-mueble" x="'+(x-22)+'" y="150" width="44" height="7" rx="3"/>' +
+        '<line class="f-mueble-l" x1="'+(x-17)+'" y1="157" x2="'+(x-20)+'" y2="'+PISO+'"/>' +
+        '<line class="f-mueble-l" x1="'+(x+17)+'" y1="157" x2="'+(x+20)+'" y2="'+PISO+'"/>';
+    }
+    function sillaFrente(x){
+      x = x || 120;
+      return piso() + '<rect class="f-mueble" x="'+(x-30)+'" y="141" width="60" height="7" rx="3"/>' +
+        '<line class="f-mueble-l" x1="'+(x-26)+'" y1="148" x2="'+(x-26)+'" y2="'+PISO+'"/>' +
+        '<line class="f-mueble-l" x1="'+(x+26)+'" y1="148" x2="'+(x+26)+'" y2="'+PISO+'"/>';
+    }
+    function colchoneta(y){
+      return '<rect class="f-mueble" x="16" y="'+y+'" width="208" height="5" rx="2.5"/>';
+    }
+
+    // ---------- posturas base ----------
+    function con(base, extra){
+      var o = {}, k;
+      for(k in base) o[k] = base[k];
+      for(k in extra) o[k] = extra[k];
+      return o;
+    }
+    // sentado de perfil, mirando a la derecha, manos sobre los muslos
+    var SENT_P = {x:112, y:143, mu1:90, pi1:180, mu2:88, pi2:178, bc1:168, an1:112, bc2:170, an2:114};
+    // de pie de perfil
+    var PIE_P = {x:112, y:107};
+    // sentado de frente: los muslos vienen hacia vos y se ven cortos
+    var SENT_F = {x:120, y:136, muslo:.22, mu1:178, pi1:180, mu2:182, pi2:180,
+                  bc1:168, an1:176, bc2:192, an2:184};
+    // de pie de frente
+    var PIE_F = {x:120, y:107, mu1:177, pi1:180, mu2:183, pi2:180, bc1:170, an1:174, bc2:190, an2:186};
+
+    var D = {};
+
+    // ---------- cuello: movilidad (pausa activa) ----------
+    D["retraccion"] = {
+      vista:"perfil", props:function(){ return banqueta(112); }, mirada:true,
+      poses:[ con(SENT_P,{}), con(SENT_P,{hx:-8, cu:-6}) ],
+      fases:[[1,1.1,"mentón atrás"],[1,.9,"sostené"],[0,1.1,"soltá"],[0,.7,""]],
+      mueve:["cabeza","cuello"], traza:[["frente",0,1]], zoom:[118,100,1.28], 
+      notas:[{a:"frente", p:[152,36], t:["la mirada","sigue al frente"]},
+             {a:"nuca", p:[80,44], t:["la cabeza va","hacia atrás,","no hacia abajo"]}]
+    };
+    D["flexion"] = {
+      vista:"perfil", props:function(){ return banqueta(112); }, mirada:true,
+      poses:[ con(SENT_P,{}), con(SENT_P,{cu:24, ca:52}) ],
+      fases:[[1,1.4,"mentón al pecho"],[1,.9,"sentí la nuca"],[0,1.4,"volvé despacio"],[0,.6,""]],
+      mueve:["cabeza","cuello"], traza:[["coron",0,1]], zoom:[118,100,1.28], 
+      notas:[{a:"nuca", p:[80,48], t:["estira","atrás"]}]
+    };
+    D["extension"] = {
+      vista:"perfil", props:function(){ return banqueta(112); }, mirada:true,
+      poses:[ con(SENT_P,{}), con(SENT_P,{cu:-14, ca:-40}) ],
+      fases:[[1,1.4,"mirá arriba"],[1,.8,"hasta cómodo"],[0,1.4,"volvé"],[0,.6,""]],
+      mueve:["cabeza","cuello"], traza:[["frente",0,1]], zoom:[118,100,1.28], 
+      notas:[{a:"mitcue", p:[80,72], t:["lento y","relajado"]}]
+    };
+    D["inclinacion"] = {
+      vista:"frente", props:function(){ return sillaFrente(); },
+      poses:[ con(SENT_F,{}), con(SENT_F,{cu:14, ca:34}) ],
+      fases:[[1,1.4,"oreja al hombro"],[1,.9,""],[0,1.4,"volvé"],[0,.5,""]],
+      mueve:["cabeza","cuello"], traza:[["coron",0,1]], zoom:[118,100,1.28], 
+      notas:[{a:"ombro1", p:[166,112], t:["el hombro","no sube"]},
+             {a:"sien1", p:[158,36], t:["la oreja baja","al hombro"]}]
+    };
+    D["rotacion"] = {
+      vista:"frente", props:function(){ return sillaFrente(); }, fantasma:false,
+      poses:[ con(SENT_F,{}), con(SENT_F,{gi:1}), con(SENT_F,{gi:-1}) ],
+      fases:[[1,1.2,"mirá a un lado"],[1,.7,""],[0,1.1,"al centro"],[2,1.2,"al otro lado"],[2,.7,""],[0,1.1,"al centro"]],
+      quieto:1, mueve:["cabeza"], zoom:[118,100,1.28], 
+      flechas:function(J){
+        var c = J.cab;
+        return '<path class="f-ruta" d="M'+n(c[0]-24)+' '+n(c[1]-16)+' Q '+n(c[0])+' '+n(c[1]-36)+' '+n(c[0]+24)+' '+n(c[1]-16)+'"/>' +
+          punta([c[0]+16, c[1]-23], [c[0]+25, c[1]-15], "f-ruta-punta") +
+          punta([c[0]-16, c[1]-23], [c[0]-25, c[1]-15], "f-ruta-punta");
+      },
+      notas:[{a:"sien1", p:[150,34], t:["mirá por encima","del hombro"]},
+             {a:"ombro2", p:[72,118], t:["los hombros","quedan quietos"]}]
+    };
+
+    // ---------- cuello: isometricos ----------
+    // nada se mueve: la mano frena lo que empuja la cabeza. Lo que se anima
+    // es la fuerza (flechas y la tension del cuello), no la cabeza.
+    var FASES_ISO = [[1,.6,"empujá"],[1,1.6,"sostené"],[0,.5,"soltá"],[0,1,""]];
+    D["iso-flexion"] = {
+      vista:"perfil", props:function(){ return banqueta(112); }, tension:true, fantasma:false,
+      codo1:1, mueve:["mano1"], quieto:1,
+      poses:[ con(SENT_P,{m1:["frente",1,-1]}), con(SENT_P,{m1:["frente",1,-1], fz:1}) ],
+      fases:FASES_ISO,
+      flechas:function(J, P){
+        var f = J.frente, c = J.cab;
+        return flecha([f[0]+30, f[1]], [f[0]+9, f[1]], .25 + .75*P.fz) +
+               flecha([c[0]-14, c[1]-24], [c[0]+12, c[1]-24], .25 + .75*P.fz);
+      },
+      zoom:[118,100,1.28], 
+      notas:[{a:null, p:[112,30], t:"la cabeza empuja →", al:"middle", sinLinea:true, fuerte:true},
+             {a:"ma1", p:[160,74], t:["palma en","la frente:","la mano frena"]},
+             {a:"mitcue", p:[76,100], t:["el cuello","no se mueve"]}]
+    };
+    D["iso-extension"] = {
+      vista:"perfil", props:function(){ return banqueta(112); }, tension:true, fantasma:false,
+      codo1:1, mueve:["mano1"], quieto:1,
+      poses:[ con(SENT_P,{m1:["nuca",-1,-1]}), con(SENT_P,{m1:["nuca",-1,-1], fz:1}) ],
+      fases:FASES_ISO,
+      flechas:function(J, P){
+        var f = J.nuca, c = J.cab;
+        return flecha([f[0]-30, f[1]], [f[0]-9, f[1]], .25 + .75*P.fz) +
+               flecha([c[0]+14, c[1]-24], [c[0]-12, c[1]-24], .25 + .75*P.fz);
+      },
+      zoom:[118,100,1.28], 
+      notas:[{a:null, p:[118,30], t:"← la cabeza empuja", al:"middle", sinLinea:true, fuerte:true},
+             {a:"ma1", p:[66,44], t:["mano en","la nuca:","la mano frena"]},
+             {a:"mitcue", p:[156,100], t:["el cuello","no se mueve"]}]
+    };
+    D["iso-lateral"] = {
+      vista:"frente", props:function(){ return sillaFrente(); }, tension:true, fantasma:false,
+      codo1:1, mueve:["mano1"], quieto:1,
+      poses:[ con(SENT_F,{m1:["sien1",1,0]}), con(SENT_F,{m1:["sien1",1,0], fz:1}) ],
+      fases:FASES_ISO,
+      flechas:function(J, P){
+        var s = J.sien1, c = J.cab;
+        return flecha([s[0]+30, s[1]+16], [s[0]+9, s[1]+4], .25 + .75*P.fz) +
+               flecha([c[0]-8, c[1]-24], [c[0]+16, c[1]-24], .25 + .75*P.fz);
+      },
+      zoom:[118,100,1.28], 
+      notas:[{a:null, p:[120,30], t:"la cabeza empuja →", al:"middle", sinLinea:true, fuerte:true},
+             {a:"ma1", p:[170,98], t:["palma al","costado:","la mano frena"]},
+             {a:"mitcue", p:[78,96], t:["el cuello","no se mueve"]}]
+    };
+    // de frente, tu lado derecho queda a la izquierda de la pantalla: el
+    // dibujo base es el lado izquierdo y el derecho sale en espejo
+    D["iso-lateral-der"] = con(D["iso-lateral"], {espejo:true});
+
+    // ---------- resistencia: elevacion de cabeza ----------
+    D["elev-supino"] = {
+      vista:"perfil", props:function(){ return piso(184) + colchoneta(179); },
+      poses:[ {x:122, y:167, tr:-90, cu:-90, ca:-90, bc1:90, an1:90, bc2:90, an2:90, mu1:90, pi1:90, mu2:90, pi2:90},
+              {x:122, y:167, tr:-90, cu:-54, ca:-30, bc1:90, an1:90, bc2:90, an2:90, mu1:90, pi1:90, mu2:90, pi2:90} ],
+      fases:[[1,1.2,"despegá la cabeza"],[1,.6,"un instante"],[0,1.3,"bajá controlando"],[0,.6,""]],
+      mueve:["cabeza","cuello"], traza:[["coron",0,1]], zoom:[104,146,1.6],
+      notas:[{a:"frente", p:[80,124], t:["mentón","al pecho"]},
+             {a:null, p:[104,92], t:"boca arriba, sin almohada", al:"middle", sinLinea:true}]
+    };
+    D["elev-prono"] = {
+      vista:"perfil", mira:-1, mirada:24, props:function(){ return piso(184) + colchoneta(179); },
+      poses:[ {x:122, y:167, tr:-90, cu:-90, ca:-90, bc1:90, an1:90, bc2:90, an2:90, mu1:90, pi1:90, mu2:90, pi2:90},
+              {x:122, y:167, tr:-90, cu:-66, ca:-74, bc1:90, an1:90, bc2:90, an2:90, mu1:90, pi1:90, mu2:90, pi2:90} ],
+      fases:[[1,1.2,"despegá la cabeza"],[1,.6,"un instante"],[0,1.3,"bajá"],[0,.6,""]],
+      mueve:["cabeza","cuello"], traza:[["coron",0,1]], zoom:[104,146,1.6],
+      notas:[{a:"mitcue", p:[96,124], t:["mirada al piso,","sin tirar el","cuello atrás"]},
+             {a:null, p:[104,92], t:"boca abajo, la frente apoyada", al:"middle", sinLinea:true}]
+    };
+
+    // ---------- hombro, escapula y brazo (mancuernas) ----------
+    D["encogimientos"] = {
+      vista:"frente", props:function(){ return piso(); }, pesa1:true, pesa2:true, pesaVista:"barra",
+      poses:[ con(PIE_F,{bc1:176, an1:178, bc2:184, an2:182}),
+              con(PIE_F,{bc1:176, an1:178, bc2:184, an2:182, hom:8}) ],
+      fases:[[1,1,"subí los hombros"],[1,.5,""],[0,1.3,"bajá controlando"],[0,.5,""]],
+      mueve:["hombros","brazo1","brazo2"], traza:[["ombro1",0,1],["ombro2",0,1]],
+      notas:[{a:"ombro1", p:[184,46], t:["hombros hacia","las orejas"]},
+             {a:"co2", p:[40,128], t:["brazos","estirados"]}]
+    };
+    D["press"] = {
+      vista:"frente", props:function(){ return piso(); }, pesa1:true, pesa2:true, pesaVista:"barra",
+      poses:[ con(PIE_F,{bc1:96, an1:4, bc2:-96, an2:-4}),
+              con(PIE_F,{bc1:14, an1:6, bc2:-14, an2:-6}) ],
+      fases:[[1,1.2,"empujá arriba"],[1,.4,""],[0,1.4,"bajá a los hombros"],[0,.5,""]],
+      mueve:["brazo1","brazo2"], traza:[["ma1",0,1]], zoom:[120,96,.86],
+      notas:[{a:"ma2", p:[44,40], t:["hasta estirar","los brazos"]}]
+    };
+    D["curl"] = {
+      vista:"perfil", props:function(){ return piso(); }, pesa1:true, pesa2:true,
+      poses:[ con(PIE_P,{bc1:182, an1:182, bc2:178, an2:178}),
+              con(PIE_P,{bc1:184, an1:30, bc2:180, an2:26}) ],
+      fases:[[1,1.1,"subí"],[1,.4,""],[0,1.4,"bajá controlando"],[0,.5,""]],
+      mueve:["brazo1","brazo2"], traza:[["ma1",0,1]],
+      notas:[{a:"co1", p:[64,120], t:["el codo queda","pegado al cuerpo"]}]
+    };
+    D["remo"] = {
+      vista:"perfil", props:function(){ return piso(); }, pesa1:true, pesa2:true, mirada:false,
+      poses:[ {x:100, y:104, tr:58, cu:62, ca:70, mu1:168, pi1:192, mu2:172, pi2:194,
+               bc1:180, an1:180, bc2:176, an2:178, ancla:[110,178]},
+              {x:100, y:104, tr:58, cu:62, ca:70, mu1:168, pi1:192, mu2:172, pi2:194,
+               bc1:236, an1:184, bc2:232, an2:182, ancla:[110,178]} ],
+      fases:[[1,1.1,"codos atrás"],[1,.5,""],[0,1.4,"bajá controlando"],[0,.5,""]],
+      mueve:["brazo1","brazo2"], traza:[["co1",0,1]],
+      notas:[{a:"pecho", p:[150,30], t:["espalda recta,","inclinada"]},
+             {a:"co1", p:[58,96], t:["llevá los codos","hacia atrás"]}]
+    };
+    D["aperturas"] = {
+      // de frente con el tronco inclinado hacia vos: por eso el tronco se ve corto
+      vista:"frente", props:function(){ return piso(); }, pesa1:true, pesa2:true,
+      poses:[ con(PIE_F,{tl:.62, cu:0, bc1:176, an1:180, bc2:184, an2:180}),
+              con(PIE_F,{tl:.62, cu:0, bc1:96, an1:104, bc2:264, an2:256}) ],
+      fases:[[1,1.4,"abrí"],[1,.4,"juntá omóplatos"],[0,1.5,"cerrá despacio"],[0,.6,""]],
+      mueve:["brazo1","brazo2"], traza:[["ma1",0,1],["ma2",0,1]],
+      notas:[{a:"cue", p:[176,34], t:["tronco inclinado","hacia adelante"]},
+             {a:"co1", p:[192,140], t:["brazos casi","estirados"]}]
+    };
+    D["pullover"] = {
+      vista:"perfil", pesa1:true,
+      props:function(){
+        return piso() + '<rect class="f-mueble" x="34" y="152" width="102" height="8" rx="3"/>' +
+          '<line class="f-mueble-l" x1="44" y1="160" x2="44" y2="'+PISO+'"/>' +
+          '<line class="f-mueble-l" x1="126" y1="160" x2="126" y2="'+PISO+'"/>';
+      },
+      poses:[ {x:124, y:140, tr:-90, cu:-90, ca:-90, mu1:90, pi1:180, mu2:88, pi2:178,
+               bc1:0, an1:0, bc2:2, an2:2},
+              {x:124, y:140, tr:-90, cu:-90, ca:-90, mu1:90, pi1:180, mu2:88, pi2:178,
+               bc1:-84, an1:-88, bc2:-82, an2:-86} ],
+      fases:[[1,1.8,"atrás de la cabeza"],[1,.4,""],[0,1.8,"volvé"],[0,.5,""]],
+      mueve:["brazo1","brazo2"], traza:[["ma1",0,1]], zoom:[110,124,1.15],
+      notas:[{a:null, p:[110,50], t:"acostado en un banco", al:"middle", sinLinea:true}]
+    };
+
+    // ---------- tronco ----------
+    D["sentadilla"] = {
+      vista:"perfil", props:function(){ return piso(); },
+      poses:[ con(PIE_P,{bc1:178, an1:178, bc2:180, an2:180, ancla:[120,178]}),
+              con(PIE_P,{tr:34, cu:30, ca:28, mu1:96, pi1:200, mu2:98, pi2:202, bc1:96, an1:94, bc2:98, an2:96, ancla:[120,178]}) ],
+      fases:[[1,1.3,"bajá"],[1,.3,""],[0,1.3,"subí"],[0,.6,""]],
+      mueve:["tronco","pierna1","pierna2"], traza:[["cad",0,1]],
+      notas:[{a:"cad", p:[44,90], t:["cadera atrás","y abajo"]}]
+    };
+    D["abdominal"] = {
+      vista:"perfil", props:function(){ return piso(184) + colchoneta(179); },
+      poses:[ {x:132, y:167, tr:-90, cu:-90, ca:-90, mu1:40, pi1:150, mu2:42, pi2:152, bc1:86, an1:86, bc2:86, an2:86},
+              {x:132, y:167, tr:-64, cu:-60, ca:-56, mu1:40, pi1:150, mu2:42, pi2:152, bc1:100, an1:98, bc2:100, an2:98} ],
+      fases:[[1,1.3,"despegá la espalda alta"],[1,.5,""],[0,1.5,"bajá despacio"],[0,.6,""]],
+      mueve:["tronco","cabeza","cuello"], traza:[["cue",0,1]], zoom:[118,142,1.45]
+    };
+    D["ext-espalda"] = {
+      vista:"perfil", mira:-1, mirada:24, props:function(){ return piso(184) + colchoneta(179); },
+      poses:[ {x:128, y:167, tr:-90, cu:-90, ca:-90, bc1:90, an1:90, bc2:90, an2:90, mu1:90, pi1:90, mu2:90, pi2:90},
+              {x:128, y:167, tr:-74, cu:-74, ca:-76, bc1:94, an1:92, bc2:94, an2:92, mu1:90, pi1:90, mu2:90, pi2:90} ],
+      fases:[[1,1.4,"despegá el pecho"],[1,.6,""],[0,1.4,"bajá"],[0,.6,""]],
+      mueve:["tronco","cabeza","cuello"], traza:[["cue",0,1]], zoom:[112,142,1.45],
+      notas:[{a:null, p:[112,82], t:"boca abajo, cadera apoyada", al:"middle", sinLinea:true}]
+    };
+
+    // ---------- estiramientos ----------
+    D["est-trapecio"] = {
+      vista:"frente", props:function(){ return sillaFrente(); }, codo1:1,
+      poses:[ con(SENT_F,{m1:["coron",0,-1], m2:[94,146]}),
+              con(SENT_F,{tr:8, cu:16, ca:36, gi:.45, fl:.5, m1:["sien1",-2,-6], m2:[94,146]}) ],
+      fases:[[1,1.6,"cabeza al costado"],[1,1.6,"sostené"],[0,1.4,"volvé"],[0,.5,""]],
+      mueve:["cabeza","cuello","tronco"], fantasma:0,
+      zoom:[118,100,1.28], 
+      notas:[{a:"ma1", p:[166,36], t:["la mano","acompaña,","no tira"]},
+             {a:"ma2", p:[72,152], t:["la otra mano","agarra la silla"]}]
+    };
+    D["est-escalenos"] = {
+      vista:"frente", props:function(){ return sillaFrente(); }, codo1:-1,
+      poses:[ con(SENT_F,{m1:["clav2",3,2]}),
+              con(SENT_F,{cu:14, ca:30, gi:.5, fl:-.6, m1:["clav2",3,2]}) ],
+      fases:[[1,1.6,"oreja al hombro"],[1,.8,"girá despacio"],[1,.8,""],[0,1.4,"volvé"],[0,.5,""]],
+      mueve:["cabeza","cuello"],
+      zoom:[118,100,1.28], 
+      notas:[{a:"ma1", p:[70,124], t:["mano en la","clavícula","del otro lado"]},
+             {a:"frente", p:[160,36], t:["cabeza un","poco atrás"]}]
+    };
+    D["est-elevador"] = {
+      vista:"frente", props:function(){ return sillaFrente(); }, codo1:1,
+      poses:[ con(SENT_F,{m1:["coron",0,-1], m2:[94,146]}),
+              con(SENT_F,{tr:8, cu:20, ca:40, gi:.6, fl:1, m1:["coron",-2,-2], m2:[94,146]}) ],
+      fases:[[1,1.6,"mentón al pecho, girá"],[1,1.6,"sostené"],[0,1.4,"volvé"],[0,.5,""]],
+      mueve:["cabeza","cuello","tronco"], fantasma:0,
+      zoom:[118,100,1.28], 
+      notas:[{a:"ma1", p:[166,36], t:["mano arriba","de la cabeza,","no tira"]},
+             {a:"ma2", p:[72,152], t:["la otra mano","agarra la silla"]}]
+    };
+    D["apertura-libro"] = {
+      // vista desde el techo: acostado de costado. El brazo de arriba sube
+      // hacia vos (por eso se achica) y baja del otro lado.
+      fantasma:false,
+      poses:[ {th:0}, {th:170} ],
+      fases:[[1,2,"abrí, siguiéndolo con la mirada"],[1,.6,""],[0,2,"cerrá"],[0,.6,""]],
+      custom:function(P){
+        var s = "";
+        var co = Math.cos(P.th*Math.PI/180);
+        // cuerpo de costado, cabeza a la izquierda
+        s += '<rect class="f-mueble" x="18" y="84" width="204" height="40" rx="6"/>';
+        s += hueso([[86,104],[176,104]], 30, "f-tronco");
+        s += hueso([[176,110],[196,134],[200,148]], 13, "f-cerca");        // pierna de arriba a 90°
+        s += hueso([[176,100],[214,98]], 12, "f-lejos");                    // pierna de abajo estirada
+        s += hueso([[92,112],[92,150]], 10, "f-lejos");                     // brazo de abajo, al frente
+        s += circulo([92,152], 5.5, "f-lejos");
+        var largo = 44*co;
+        var punta2 = [96, 104 + largo + (co >= 0 ? 4 : -4)];
+        s += hueso([[96,104], punta2], 10, "f-mueve");
+        s += circulo(punta2, 5.5 + 2*(1 - Math.abs(co)), "f-mueve");
+        s += '<circle class="f-borde-c" cx="62" cy="104" r="15.5"/>' + circulo([62,104], L.cabeza, "f-mueve");
+        var nz = 104 + 15*co;
+        if(Math.abs(co) > .2) s += circulo([62, nz], 2.4, "f-nariz");
+        else s += circulo([62,104], 2.4, "f-nariz");
+        s += '<path class="f-ruta" d="M118 152 A 48 48 0 0 0 118 56"/>' +
+             punta([119,64],[118,55],"f-ruta-punta");
+        return s;
+      },
+      notas:[{a:null, p:[120,22], t:"visto desde el techo, acostado de costado", al:"middle", sinLinea:true},
+             {a:[196,136], p:[206,172], t:["rodilla a 90°"], al:"end", sinLinea:false},
+             {a:[92,150], p:[40,172], t:["brazos al frente"], al:"middle"}]
+    };
+
+    // ---------- moverse ----------
+    D["caminar"] = {
+      vista:"perfil", props:function(){ return piso(); }, fantasma:false,
+      poses:[ con(PIE_P,{mu1:160, pi1:176, mu2:202, pi2:212, bc1:200, an1:190, bc2:160, an2:140}),
+              con(PIE_P,{mu1:202, pi1:212, mu2:160, pi2:176, bc1:160, an1:140, bc2:200, an2:190}) ],
+      fases:[[1,.7,"caminá"],[0,.7,"caminá"]],
+      mueve:["pierna1","pierna2"],
+      notas:[{a:null, p:[120,22], t:"pará y caminá unos minutos", al:"middle", sinLinea:true}]
+    };
+
+    // ---------- version corta: elevacion lateral con banda ----------
+    D["elev-lateral"] = {
+      vista:"frente",
+      props:function(){ return piso(); },
+      poses:[ con(PIE_F,{bc1:166, an1:168, bc2:194, an2:192}),
+              con(PIE_F,{bc1:92, an1:94, bc2:268, an2:266}) ],
+      fases:[[1,2,"subí · 2 s"],[0,2,"bajá · 2 s"]],
+      mueve:["brazo1","brazo2"], traza:[["ma1",0,1]],
+      flechas:function(J){
+        return linea(J.pp1, J.ma1, 2.2, "f-banda") + linea(J.pp2, J.ma2, 2.2, "f-banda");
+      },
+      notas:[{a:"pp1", p:[204,172], t:["banda bajo","los pies"]},
+             {a:"ma1", p:[200,54], t:["hasta","el hombro"]}]
+    };
+
+    // ---------- animacion ----------
+    // Un solo bucle para todas las figuras en pantalla. Respeta
+    // prefers-reduced-motion: sin animacion, se ve la postura de trabajo.
+    var quieto = false;
+    try{ quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+    var activo = false;
+    function bucle(ts){
+      var figs = document.querySelectorAll("svg.fig[data-fig]");
+      if(!figs.length){ activo = false; return; }
+      var vh = window.innerHeight || 800;
+      for(var i=0;i<figs.length;i++){
+        var el = figs[i], d = D[el.getAttribute("data-fig")];
+        if(!d) continue;
+        var r = el.getBoundingClientRect();
+        if(r.width === 0 || r.bottom < 0 || r.top > vh) continue;
+        if(!el._t0) el._t0 = ts;
+        el.lastChild.innerHTML = dibujar(d, (ts - el._t0)/1000, false);
+      }
+      requestAnimationFrame(bucle);
+    }
+    function arrancar(){
+      if(quieto || activo || typeof requestAnimationFrame !== "function") return;
+      activo = true;
+      requestAnimationFrame(bucle);
+    }
+
+    var fn = function(clave, titulo){
+      var d = D[clave];
+      if(!d) return "";
+      setTimeout(arrancar, 0);
+      return '<svg class="fig" data-fig="'+clave+'" viewBox="'+caja(d).map(n).join(" ")+'" xmlns="http://www.w3.org/2000/svg" ' +
+             'role="img" aria-label="Dibujo del ejercicio: ' + esc(titulo || "") + '"><g>' +
+             dibujar(d, 0, true) + '</g></svg>';
+    };
+    fn.claves = function(){ return Object.keys(D); };
+    // para la pagina de prueba: un cuadro de la animacion en el segundo seg
+    fn.cuadro = function(clave, seg){ return dibujar(D[clave], seg, false); };
+    return fn;
+  })();
+
+  // =========================================================================
+  // SESIÓN GUIADA Y PAUSA ACTIVA
+  // Los ejercicios, las dosis y las advertencias salen de contenido/plan.md.
+  // Donde el protocolo no publica un número, el paso lo dice: FALTA.
+  // =========================================================================
+
+  var FUENTE_YLINEN = "Protocolo del ensayo de Ylinen (JAMA 2003, PMID 12759322), " +
+                      "reproducido con series y repeticiones en PMID 25995604.";
+  var FUENTE_F1 = "Folleto de fisioterapia de St George's University Hospitals NHS (F1).";
+  var FUENTE_F3 = "Folleto de fisioterapia de Cambridge University Hospitals NHS (F3).";
+  var FUENTE_PAUSAS = "Ensayo aleatorizado por conglomerados en oficinistas (PMID 33906239): " +
+                      "aumentar pausas activas redujo la nueva aparición de dolor.";
+
+  // Rampa de carga por semana. NO sale de ninguna fuente: es la decisión
+  // documentada como DECISIÓN MÍA en plan.md. El protocolo publicado son
+  // las semanas 5 en adelante.
+  function cargaDeSemana(sem){
+    if(sem <= 2) return {cuello:"isométrico suave, con la mano", peso:"1 kg o sin peso", rampa:true};
+    if(sem <= 4) return {cuello:"banda floja, o la mano firme",  peso:"1 kg",            rampa:true};
+    if(sem <= 8) return {cuello:"banda con tensión",             peso:"2 kg",            rampa:false};
+    return          {cuello:"banda con más tensión",             peso:"2 kg — sostener", rampa:false};
+  }
+  function semanaActual(inicio){
+    if(!inicio) return 1;
+    return Math.floor(diasEntre(inicio, hoyISO()) / 7) + 1;
+  }
+
+  function pasoIntro(sem, carga){
+    var aviso = carga.rampa
+      ? "<p class=\"origen\">Estás en la semana " + sem + ". La carga de estas primeras semanas " +
+        "es una rampa que armé yo para llegar al protocolo sin lastimarte — no sale de ninguna " +
+        "fuente. El protocolo publicado empieza en la semana 5.</p>"
+      : "<p class=\"origen\">Semana " + sem + ": ya estás en la carga del protocolo publicado.</p>";
+    return {
+      bloque: "Antes de empezar",
+      titulo: "Tres reglas",
+      dosis: "",
+      intro: "<div class=\"intro\"><ul>" +
+        "<li>Si un ejercicio <strong>empeora</strong> el dolor, se para.</li>" +
+        "<li>Si aparece <strong>mareo</strong>, se para y se consulta.</li>" +
+        "<li>Esfuerzo firme, <strong>nunca dolor</strong>. La última repetición tiene que costar.</li>" +
+        "</ul></div>" + aviso +
+        "<p class=\"como\" style=\"margin-top:1.1rem\">¿Qué sesión hacés hoy?</p>" +
+        "<div class=\"opcion\">" +
+        "<button class=\"btn\" type=\"button\" data-modo=\"banda\">Fuerza · con banda<br><small>~60 min</small></button>" +
+        "<button class=\"btn sec\" type=\"button\" data-modo=\"mano\">Fuerza · con la mano<br><small>~60 min</small></button>" +
+        "<button class=\"btn sec\" type=\"button\" data-modo=\"resistencia\">Resistencia<br><small>~45 min</small></button>" +
+        "<button class=\"btn sec\" type=\"button\" data-modo=\"corta\">Corta · todos los días<br><small>2 min</small></button>" +
+        "</div>",
+      origen: "La regla de parar sale de la Chartered Society of Physiotherapy y de F1/F3. " +
+              "Los dos brazos del ensayo funcionaron: a los 3 años no había diferencia entre " +
+              "fuerza y resistencia en dolor ni discapacidad (PMID 17525699). Los 60 y 45 " +
+              "minutos son los del ensayo, textual. La corta es otro ensayo: 2 minutos por día, " +
+              "5 días por semana, bajó el dolor de cuello y hombro (PMID 21177034)."
+    };
+  }
+
+  function bloqueA(carga, modo){
+    if(modo === "resistencia"){
+      // Brazo de resistencia del mismo ensayo: elevación de cabeza, 3 x 20.
+      return [
+        {p:"boca arriba", f:"elev-supino", c:"Acostado boca arriba, sin almohada. Despegá la cabeza de la " +
+           "colchoneta llevando el mentón al pecho, sostené un instante y bajá controlando."},
+        {p:"boca abajo",  f:"elev-prono", c:"Acostado boca abajo, la frente apoyada. Despegá la cabeza mirando " +
+           "al frente sin tirar el cuello hacia atrás, sostené un instante y bajá."}
+      ].map(function(e){
+        return {
+          bloque: "Bloque A · Cuello (resistencia)",
+          titulo: "Elevación de cabeza — " + e.p,
+          fig: e.f,
+          dosis: "3 series × 20 repeticiones",
+          como: e.c + " Movimiento lento y controlado.",
+          cuidado: "Si el cuello tiembla o aparece dolor, cortá la serie ahí.",
+          origen: "Brazo de resistencia del ensayo de Ylinen (PMID 12759322), descrito en " +
+                  "PMID 25995604. La tabla publica la posición boca arriba; el abstract de " +
+                  "JAMA nombra boca arriba y boca abajo."
+        };
+      });
+    }
+    if(modo === "mano"){
+      // F1, E7: isométrico lateral 60 s x 5 por lado. Es la única dosis de
+      // cuello con número que publica un folleto clínico.
+      var pasos = [];
+      ["derecho","izquierdo"].forEach(function(lado){
+        for(var i=1;i<=5;i++){
+          pasos.push({
+            bloque: "Bloque A · Cuello",
+            titulo: "Isométrico lateral — lado " + lado,
+            fig: lado === "derecho" ? "iso-lateral-der" : "iso-lateral",
+            dosis: "60 segundos · serie " + i + " de 5",
+            seg: 60,
+            como: "Sentado o de pie. Apoyá la palma en el costado de la cabeza e intentá " +
+                  "inclinarla hacia ese lado resistiendo con la mano. <strong>El cuello no se " +
+                  "mueve.</strong> Respirá normal.",
+            origen: FUENTE_F1 + " Ejercicio E7, 60 s × 5 por lado."
+          });
+        }
+      });
+      return pasos;
+    }
+    return [
+      {d:"flexión",   f:"iso-flexion",   c:"Banda o mano contra la frente. Empujá hacia adelante y resistí."},
+      {d:"extensión", f:"iso-extension", c:"Banda o mano en la nuca. Empujá hacia atrás y resistí."},
+      {d:"lateral derecha",   f:"iso-lateral-der", c:"Banda o mano en el costado derecho de la cabeza. Empujá y resistí."},
+      {d:"lateral izquierda", f:"iso-lateral", c:"Banda o mano en el costado izquierdo. Empujá y resistí."}
+    ].map(function(e){
+      return {
+        bloque: "Bloque A · Cuello",
+        titulo: "Isométrico de cuello — " + e.d,
+        fig: e.f,
+        dosis: "1 serie × 15 repeticiones",
+        como: e.c + " <strong>El cuello no se mueve.</strong> Carga de hoy: " + carga.cuello + ".",
+        cuidado: "FALTA: el protocolo no publica cuánto dura cada repetición. Sostené cada una " +
+                 "un par de segundos y soltá.",
+        origen: FUENTE_YLINEN + " El ensayo usó el 80 % del máximo isométrico medido con " +
+                "dinamómetro — sin ese aparato, la intensidad es a criterio."
+      };
+    });
+  }
+
+  function bloqueB(carga, modo){
+    var esRes = (modo === "resistencia");
+    return [
+      {n:"Encogimientos de hombros", f:"encogimientos", c:"Brazos al costado, subí los hombros hacia las orejas y bajá controlando."},
+      {n:"Press por encima de la cabeza", f:"press", c:"Desde los hombros, empujá hacia arriba hasta estirar los brazos."},
+      {n:"Curl de bíceps", f:"curl", c:"Codos pegados al cuerpo, subí las mancuernas doblando el codo."},
+      {n:"Remo inclinado", f:"remo", c:"Torso inclinado hacia adelante con la espalda recta. Llevá los codos hacia atrás."},
+      {n:"Aperturas", f:"aperturas", c:"Torso inclinado, brazos casi estirados. Abrí hacia los costados juntando los omóplatos."},
+      {n:"Pullover", f:"pullover", c:"Acostado, llevá las mancuernas por detrás de la cabeza y volvé."}
+    ].map(function(e){
+      return {
+        bloque: "Bloque B · Hombro, escápula y brazo",
+        titulo: e.n,
+        fig: e.f,
+        dosis: (esRes ? "3 series × 20 repeticiones · " : "15 repeticiones · ") + carga.peso,
+        como: e.c,
+        cuidado: "FALTA: el protocolo no publica cuánto descansar entre series ni entre " +
+                 "ejercicios. Tomate lo que necesites para hacer la serie siguiente con la " +
+                 "misma forma.",
+        origen: FUENTE_YLINEN + " Es el bloque con la evidencia más fuerte de todo el plan: " +
+                "Cochrane le da calidad moderada y el efecto más grande (SMD −0,71)."
+      };
+    });
+  }
+
+  function bloqueC(){
+    return [{n:"Sentadillas",f:"sentadilla"},{n:"Abdominales",f:"abdominal"},
+            {n:"Extensión de espalda",f:"ext-espalda"}].map(function(e){
+      return {
+        bloque: "Bloque C · Tronco",
+        titulo: e.n,
+        fig: e.f,
+        dosis: "sin dosis publicada",
+        como: "El protocolo incluye este bloque pero no publica series ni repeticiones.",
+        cuidado: "FALTA: hacé lo que puedas sostener sin perder la forma. No hay número respaldado.",
+        origen: FUENTE_YLINEN
+      };
+    });
+  }
+
+  function bloqueD(){
+    return [
+      {n:"Trapecio superior y esternocleidomastoideo", fg:"est-trapecio",
+       c:"Sentado. Cabeza en flexión, inclinación y rotación al mismo lado, sosteniendo con la " +
+         "mano de ese lado. Con la otra mano agarrá la silla e incliná el cuerpo. Los dos lados.",
+       cu:"No tires de la cabeza con la mano.", f:FUENTE_F3},
+      {n:"Escalenos", fg:"est-escalenos",
+       c:"Mano opuesta sobre la clavícula, cerca del esternón. Llevá la cabeza levemente atrás, " +
+         "la oreja al hombro, y girá despacio. Los dos lados. <em>El folleto dice «mano opuesta» " +
+         "sin aclarar opuesta a qué; el dibujo muestra la mano que cruza y sujeta la clavícula del " +
+         "lado que estira — DECISIÓN MÍA.</em>",
+       cu:"", f:FUENTE_F3},
+      {n:"Elevador de la escápula", fg:"est-elevador",
+       c:"Una mano arriba de la cabeza. Llevá la cabeza hacia el pecho, girá y llevá la oreja al " +
+         "hombro. Agarrá la silla con la otra mano e incliná el cuerpo. Los dos lados.",
+       cu:"No tires de la cabeza con la mano.", f:FUENTE_F3},
+      {n:"Apertura de libro", fg:"apertura-libro", dosis:"10 veces por lado",
+       c:"De costado, brazos estirados al frente, la pierna de arriba con cadera y rodilla a 90°. " +
+         "Al exhalar subí el brazo de arriba hacia el techo y llevalo al otro lado, siguiéndolo " +
+         "con la mirada y la cabeza.",
+       cu:"", f:FUENTE_F1}
+    ].map(function(e){
+      return {
+        bloque: "Bloque D · Estiramientos",
+        titulo: e.n,
+        fig: e.fg,
+        dosis: e.dosis || "sin tiempo de sostén publicado",
+        como: e.c,
+        cuidado: e.cu || (e.dosis ? "" : "FALTA: el folleto original deja el tiempo en blanco para " +
+                 "que lo complete el fisioterapeuta. No hay número universal."),
+        origen: e.f + " Van al final: son el complemento, no el plato principal."
+      };
+    });
+  }
+
+  function pasoFinal(modo){
+    return {
+      bloque: "Listo",
+      titulo: modo === "resistencia" ? "Sesión de resistencia terminada" : "Sesión terminada",
+      dosis: "",
+      como: "Al cerrar queda marcada como hecha en el día de hoy.",
+      origen: "Sostener esto es el tratamiento: con adherencia alta el ejercicio iguala a la " +
+              "terapia manual (PMID 40273517). En el ensayo original la gente promedió 1,9 " +
+              "sesiones por semana y funcionó igual.",
+      fin: "fuerza"
+    };
+  }
+
+  // Sesión corta: otro ensayo, otra población. 2 minutos por día de un solo
+  // ejercicio con banda elástica, 5 días por semana, 10 semanas.
+  function sesionCorta(){
+    return [{
+      bloque: "Sesión corta · 2 minutos",
+      titulo: "Elevación lateral con banda",
+      fig: "elev-lateral",
+      dosis: "2 minutos · hasta que no salga una más bien hecha",
+      seg: 120,
+      como: "De pie, la banda pisada con los dos pies y una punta en cada mano. Subí los brazos " +
+            "hacia los costados, un poco adelante, hasta la altura del hombro: <strong>2 segundos " +
+            "para subir, sin pausa arriba, 2 segundos para bajar.</strong> Seguí hasta que no puedas " +
+            "hacer otra con buena forma. Cuando hagas 12 con facilidad, banda más dura.",
+      cuidado: "FALTA: el resumen no dice cuántas series entran en los 2 minutos ni cuánto se " +
+               "descansa. Hacé las que salgan con buena forma dentro del tiempo.",
+      origen: "Andersen y col., Pain 2011 (PMID 21177034): 2 minutos por día, 5 días por semana, " +
+              "10 semanas; el dolor bajó 1,4 puntos sobre 10 contra el grupo control. El ejercicio " +
+              "(elevación lateral en el plano de la escápula), el ritmo de 2 s y el ir hasta el fallo " +
+              "con carga de 8 a 12 repeticiones están en el informe del mismo ensayo (PMID 23758661). " +
+              "Ojo: eran adultos sanos con dolor frecuente de cuello y hombro, no el ensayo de " +
+              "Ylinen; es un plan B para los días que no da el tiempo, no un reemplazo verificado."
+    }];
+  }
+
+  function armarSesion(modo){
+    if(modo === "corta") return sesionCorta().concat([pasoFinal(modo)]);
+    var r = calcular();
+    var sem = semanaActual(r.inicio);
+    var carga = cargaDeSemana(sem);
+    return [].concat(bloqueA(carga, modo), bloqueB(carga, modo), bloqueC(), bloqueD(),
+                     [pasoFinal(modo)]);
+  }
+
+  var PAUSA = [
+    {t:"Retracción de mentón", f:"retraccion", d:"10 veces", seg:20,
+     c:"Espalda recta. Meté el mentón hacia atrás sin inclinar la cabeza, como haciendo papada. " +
+       "Sostené un segundo en el final y soltá."},
+    {t:"Rotación", f:"rotacion", d:"suave, los dos lados", seg:20,
+     c:"Girá la cabeza a mirar por encima de un hombro, volvé al centro, y al otro. Al exhalar.",
+     cu:"Si da mareo, pará y consultá."},
+    {t:"Inclinación lateral", f:"inclinacion", d:"suave, los dos lados", seg:20,
+     c:"Llevá la oreja hacia el hombro sin encoger el hombro."},
+    {t:"Flexión", f:"flexion", d:"suave", seg:15,
+     c:"Bajá el mentón hacia el pecho hasta sentir el estiramiento atrás. Volvé despacio."},
+    {t:"Extensión", f:"extension", d:"suave", seg:15,
+     c:"Mirá hacia arriba, hasta donde estés cómodo. Lento y relajado."},
+    {t:"Levantate", f:"caminar", d:"unos minutos", seg:0,
+     c:"Pará, caminá un poco, hacé alguna tarea de pie. Esto es lo que más pesa de toda la pausa: " +
+       "el problema es la quietud, no el ángulo."}
+  ].map(function(e){
+    return {
+      bloque:"Pausa activa", titulo:e.t, fig:e.f, dosis:e.d, seg:e.seg, como:e.c, cuidado:e.cu || "",
+      origen: FUENTE_PAUSAS
+    };
+  }).concat([{
+    bloque:"Listo", titulo:"Pausa hecha", dosis:"",
+    como:"Al cerrar se suma una pausa al día de hoy.",
+    origen:"Movimientos y regla de \"poco y muchas veces\" de F1, F3 y F4 (NHS).",
+    fin:"pausa"
+  }]);
+
+  // ---------- motor ----------
+  var R = {pasos:[], i:0, timer:null, resto:0, tipo:null};
+  var elR = document.getElementById("runner");
+  var elBarra = document.getElementById("r-barra");
+  var elBloque = document.getElementById("r-bloque");
+  var elTitulo = document.getElementById("r-titulo");
+  var elFig = document.getElementById("r-fig");
+  var elDosis = document.getElementById("r-dosis");
+  var elRelojWrap = document.getElementById("r-reloj-wrap");
+  var elReloj = document.getElementById("r-reloj");
+  var elComo = document.getElementById("r-como");
+  var elIntro = document.getElementById("r-intro");
+  var elCuidado = document.getElementById("r-cuidado");
+  var elOrigen = document.getElementById("r-origen");
+  var elFuente = document.getElementById("r-fuente");
+  var elSiguiente = document.getElementById("r-siguiente");
+  var elAtras = document.getElementById("r-atras");
+  var elPasoN = document.getElementById("r-paso");
+
+  function pararTimer(){
+    if(R.timer){ clearInterval(R.timer); R.timer = null; }
+  }
+  function mmss(s){
+    return Math.floor(s/60) + ":" + pad(s % 60);
+  }
+  function arrancarTimer(seg){
+    R.resto = seg;
+    elRelojWrap.hidden = false;
+    elReloj.textContent = mmss(R.resto);
+    elReloj.className = "reloj";
+    pararTimer();
+    R.timer = setInterval(function(){
+      R.resto--;
+      elReloj.textContent = mmss(Math.max(0, R.resto));
+      if(R.resto <= 0){
+        pararTimer();
+        elReloj.className = "reloj quieto";
+        avanzar();
+      }
+    }, 1000);
+  }
+
+  function pintarPaso(){
+    var p = R.pasos[R.i];
+    pararTimer();
+
+    elBloque.textContent = p.bloque || "";
+    elTitulo.textContent = p.titulo || "";
+    var svg = p.fig ? FIG(p.fig, p.titulo) : "";
+    elFig.innerHTML = svg;
+    elFig.hidden = !svg;
+    elDosis.textContent = p.dosis || "";
+    elDosis.hidden = !p.dosis;
+    elComo.innerHTML = p.como || "";
+    elComo.hidden = !p.como;
+    elIntro.innerHTML = p.intro || "";
+    // Cuando la advertencia es un hueco declarado, se marca como tal: la
+    // palabra FALTA es del proyecto, no un adorno.
+    var cu = p.cuidado || "";
+    if(cu.indexOf("FALTA:") === 0){
+      elCuidado.innerHTML = '<span class="chip-falta">FALTA</span>' +
+                            esc(cu.slice(6).trim());
+      elCuidado.className = "cuidado es-falta";
+    }else{
+      elCuidado.textContent = cu;
+      elCuidado.className = "cuidado";
+    }
+    elCuidado.hidden = !cu;
+    elOrigen.textContent = p.origen || "";
+    elFuente.hidden = !p.origen;
+    elFuente.open = false;
+
+    elBarra.style.width = Math.round((R.i / (R.pasos.length - 1)) * 100) + "%";
+    elPasoN.textContent = (R.i + 1) + " / " + R.pasos.length;
+    elAtras.disabled = (R.i === 0);
+    elAtras.style.visibility = (R.i === 0) ? "hidden" : "visible";
+    elSiguiente.textContent = p.fin ? "Guardar y cerrar" : "Listo";
+
+    if(p.seg){ arrancarTimer(p.seg); }
+    else { elRelojWrap.hidden = true; }
+
+    // botones de modo, solo en el paso de intro
+    var opts = elIntro.querySelectorAll("[data-modo]");
+    for(var k=0;k<opts.length;k++){
+      (function(b){
+        b.addEventListener("click", function(){
+          R.pasos = [R.pasos[0]].concat(armarSesion(b.getAttribute("data-modo")));
+          avanzar();
+        });
+      })(opts[k]);
+    }
+  }
+
+  function avanzar(){
+    var p = R.pasos[R.i];
+    if(p && p.fin){ terminar(p.fin); return; }
+    if(R.i < R.pasos.length - 1){ R.i++; pintarPaso(); }
+    else { cerrarRunner(); }
+  }
+  function retroceder(){
+    if(R.i > 0){ R.i--; pintarPaso(); }
+  }
+  function terminar(tipo){
+    var iso = hoyISO();
+    var e = datos[iso] || {};
+    if(tipo === "fuerza"){ e.fuerza = 1; }
+    else { e.pausas = (typeof e.pausas === "number" ? e.pausas : 0) + 1; }
+    datos[iso] = e;
+    guardar(datos);
+    cerrarRunner();
+    if(inFecha.value === iso) cargarEnFormulario(iso);
+    pintarTodo();
+    aviso.textContent = (tipo === "fuerza") ? "Sesión registrada." : "Pausa registrada.";
+    setTimeout(function(){ aviso.textContent = ""; }, 3000);
+  }
+  function abrirRunner(pasos, tipo){
+    R.pasos = pasos; R.i = 0; R.tipo = tipo;
+    elR.setAttribute("data-abierto","si");
+    pintarPaso();
+    elSiguiente.focus();
+  }
+  function cerrarRunner(){
+    pararTimer();
+    elR.setAttribute("data-abierto","no");
+  }
+
+  elSiguiente.addEventListener("click", avanzar);
+  elAtras.addEventListener("click", retroceder);
+  document.getElementById("r-salir").addEventListener("click", function(){
+    var p = R.pasos[R.i];
+    if(p && !p.fin && R.i > 0 &&
+       !confirm("¿Salir sin registrar? Lo que hiciste hasta acá no se guarda.")) return;
+    cerrarRunner();
+  });
+  document.addEventListener("keydown", function(ev){
+    if(elR.getAttribute("data-abierto") !== "si") return;
+    if(ev.key === "Escape"){ cerrarRunner(); }
+    else if(ev.key === "ArrowLeft"){ retroceder(); }
+    else if(ev.key === "ArrowRight"){ avanzar(); }
+  });
+
+  document.getElementById("btn-sesion").addEventListener("click", function(){
+    var r = calcular();
+    var carga = cargaDeSemana(semanaActual(r.inicio));
+    abrirRunner([pasoIntro(semanaActual(r.inicio), carga)].concat(armarSesion("banda")), "fuerza");
+  });
+  document.getElementById("btn-pausa").addEventListener("click", function(){
+    abrirRunner(PAUSA.slice(), "pausa");
+  });
+
+  function pintarHoy(){
+    var e = datos[hoyISO()] || {};
+    var bS = document.getElementById("btn-sesion");
+    var dS = document.getElementById("d-sesion");
+    var dP = document.getElementById("d-pausa");
+    var r = calcular();
+    var sem = semanaActual(r.inicio);
+    var carga = cargaDeSemana(sem);
+
+    if(e.fuerza === 1){
+      bS.disabled = true;
+      dS.textContent = "Ya la hiciste hoy.";
+    }else{
+      bS.disabled = false;
+      dS.textContent = "Cuello: " + carga.cuello + " · mancuerna: " + carga.peso + "."; 
+    }
+    var n = (typeof e.pausas === "number") ? e.pausas : 0;
+    dP.textContent = n === 0
+      ? "6 movimientos sentado."
+      : n + (n === 1 ? " pausa hecha hoy." : " pausas hechas hoy.");
+  }
+
+  // =========================================================================
+  // RECORDATORIO DE PAUSAS
+  // La pausa activa es lo único del plan con un ensayo de PREVENCIÓN detrás
+  // (PMID 33906239), y es lo que más fácil se olvida. Vive solo mientras la
+  // pestaña esté abierta: no hay servidor ni notificaciones del sistema.
+  // =========================================================================
+  var CLAVE_REC = "cervicales.recordatorio.v1";
+  var REC = {min:0, timer:null, parpadeo:null, tituloReal:document.title};
+  var selRec = document.getElementById("sel-recordatorio");
+  var estadoRec = document.getElementById("estado-recordatorio");
+  var elAviso = document.getElementById("aviso-pausa");
+
+  function beep(){
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return;
+      var ctx = new Ctx();
+      [0, 0.28].forEach(function(t){
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.frequency.value = 660; o.type = "sine";
+        g.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.18);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.2);
+      });
+      setTimeout(function(){ try{ ctx.close(); }catch(e){} }, 1200);
+    }catch(e){ /* sin sonido, el banner alcanza */ }
+  }
+
+  function mostrarAviso(){
+    document.getElementById("aviso-min").textContent = REC.min;
+    elAviso.setAttribute("data-abierto","si");
+    beep();
+    if(REC.parpadeo) clearInterval(REC.parpadeo);
+    var on = false;
+    REC.parpadeo = setInterval(function(){
+      on = !on;
+      document.title = on ? "(!) Pausa activa" : REC.tituloReal;
+    }, 900);
+  }
+  function ocultarAviso(){
+    elAviso.setAttribute("data-abierto","no");
+    if(REC.parpadeo){ clearInterval(REC.parpadeo); REC.parpadeo = null; }
+    document.title = REC.tituloReal;
+  }
+  function aplicarRecordatorio(min, guardarPref){
+    REC.min = min;
+    if(REC.timer){ clearInterval(REC.timer); REC.timer = null; }
+    ocultarAviso();
+    if(min > 0){
+      REC.timer = setInterval(mostrarAviso, min * 60 * 1000);
+      estadoRec.textContent = "activo";
+    }else{
+      estadoRec.textContent = "";
+    }
+    if(guardarPref){
+      try{ localStorage.setItem(CLAVE_REC, String(min)); }catch(e){}
+    }
+  }
+  function reiniciarRecordatorio(){
+    if(REC.min > 0) aplicarRecordatorio(REC.min, false);
+    else ocultarAviso();
+  }
+
+  selRec.addEventListener("change", function(){
+    aplicarRecordatorio(Number(selRec.value), true);
+  });
+  document.getElementById("aviso-luego").addEventListener("click", reiniciarRecordatorio);
+  document.getElementById("aviso-hacer").addEventListener("click", function(){
+    reiniciarRecordatorio();
+    abrirRunner(PAUSA.slice(), "pausa");
+  });
+
+  (function cargarPrefRec(){
+    var v = 0;
+    try{ v = Number(localStorage.getItem(CLAVE_REC) || 0); }catch(e){}
+    if([0,30,45,60].indexOf(v) < 0) v = 0;
+    selRec.value = String(v);
+    aplicarRecordatorio(v, false);
+  })();
+
+  // =========================================================================
+  // REVISIÓN — comparar el arranque contra ahora
+  // Los plazos y el veredicto salen de los folletos del NHS: F1 (12 semanas,
+  // y consultar si a las 6 no mejoró) y F2 (hasta 6 semanas).
+  // =========================================================================
+  function ventana(desde, hasta, campo){
+    var fs = fechasOrdenadas(), vals = [];
+    for(var i=0;i<fs.length;i++){
+      if(fs[i] < desde || fs[i] > hasta) continue;
+      var v = datos[fs[i]][campo];
+      if(typeof v === "number") vals.push(v);
+    }
+    return vals;
+  }
+  function contarEnVentana(desde, hasta, campo, valor){
+    var fs = fechasOrdenadas(), n = 0, dias = 0, cargados = 0;
+    for(var i=0;i<fs.length;i++){
+      if(fs[i] < desde || fs[i] > hasta) continue;
+      dias++;
+      if(typeof datos[fs[i]][campo] === "number") cargados++;
+      if(datos[fs[i]][campo] === valor) n++;
+    }
+    return {n:n, dias:dias, cargados:cargados};
+  }
+
+  function pintarRevision(r){
+    var cont = document.getElementById("rev");
+    var ver = document.getElementById("veredicto");
+
+    if(!r.inicio || r.dias < 3){
+      cont.innerHTML = "";
+      ver.innerHTML = "Cargá unos días y acá vas a ver el arranque comparado con ahora: " +
+        "cuánto se movió el dolor, cuánto entrenaste de verdad, y qué dicen las fuentes que " +
+        "conviene hacer con ese resultado.";
+      return;
+    }
+
+    var hoy = hoyISO();
+    var semanas = r.semanas;
+    var finArranque = sumarDias(r.inicio, 13);
+    if(finArranque > hoy) finArranque = hoy;
+    var iniAhora = sumarDias(hoy, -13);
+    if(iniAhora < r.inicio) iniAhora = r.inicio;
+
+    var dolA = ventana(r.inicio, finArranque, "dolor");
+    var dolB = ventana(iniAhora, hoy, "dolor");
+    var sueB = ventana(iniAhora, hoy, "sueno");
+    var minB = ventana(iniAhora, hoy, "actividad");
+    var cefA = contarEnVentana(r.inicio, finArranque, "cefalea", 1);
+    var cefB = contarEnVentana(iniAhora, hoy, "cefalea", 1);
+
+    var items = [];
+    var difDolor = null;
+
+    if(dolA.length >= 2 && dolB.length >= 2){
+      var pA = promedio(dolA), pB = promedio(dolB);
+      difDolor = pA - pB;
+      var claseD = Math.abs(difDolor) < 0.5 ? "" : (difDolor > 0 ? "bien" : "mal");
+      items.push(item(claseD, "Dolor",
+        un(pA) + " → " + un(pB),
+        (Math.abs(difDolor) < 0.5 ? "Prácticamente igual" :
+         (difDolor > 0 ? "Bajó " + un(difDolor) + " puntos" : "Subió " + un(-difDolor) + " puntos")) +
+        ". Primeras 2 semanas contra las últimas 2."));
+    }else{
+      items.push(item("", "Dolor", "—",
+        "Hacen falta al menos 2 días con dolor cargado en cada extremo para comparar."));
+    }
+
+    if(r.adherencia !== null){
+      items.push(item(r.adherencia >= 60 ? "bien" : "mal", "Adherencia",
+        r.adherencia + "%",
+        r.sesiones + " sesiones en " + un(semanas) + " semanas, " + un(r.sesionesPorSemana) +
+        " por semana. El objetivo del protocolo es 3."));
+    }
+
+    if(sueB.length){
+      items.push(item(promedio(sueB) >= 3.5 ? "bien" : "mal", "Sueño ahora",
+        un(promedio(sueB)) + " / 5",
+        "Últimas 2 semanas. Es uno de los dos predictores de dolor futuro."));
+    }
+    if(minB.length){
+      var porSemana = (minB.reduce(function(a,b){return a+b;},0) / minB.length) * 7;
+      items.push(item(porSemana >= OBJETIVO_MINUTOS ? "bien" : "mal", "Actividad ahora",
+        Math.round(porSemana) + " min/sem",
+        "Proyectado sobre los días cargados. El objetivo es " + OBJETIVO_MINUTOS + "."));
+    }
+    if(cefA.cargados && cefB.cargados){
+      var tA = (cefA.n / cefA.cargados) * 7, tB = (cefB.n / cefB.cargados) * 7;
+      items.push(item(tB <= tA ? "bien" : "mal", "Cefalea",
+        un(tA) + " → " + un(tB) + " d/sem",
+        "Días con dolor de cabeza por semana, arranque contra ahora."));
+    }
+
+    cont.innerHTML = items.join("");
+
+    // ---- veredicto, con la fuente ----
+    var t = [];
+    if(semanas < 6){
+      t.push("Llevás <strong>" + un(semanas) + " semanas</strong>. Todavía es temprano para " +
+             "juzgar: University Hospitals Sussex (F2) dice que la recuperación completa " +
+             "habitualmente lleva <strong>hasta 6 semanas</strong>, y que el dolor puede empeorar " +
+             "los primeros días.");
+    }else{
+      t.push("Llevás <strong>" + un(semanas) + " semanas</strong>.");
+      if(difDolor === null){
+        t.push("No hay suficientes días con dolor cargado para comparar el arranque con ahora.");
+      }else if(difDolor >= 0.5){
+        t.push("El dolor <strong>bajó " + un(difDolor) + " puntos</strong>. Lo que dicen las " +
+               "fuentes es seguir: el ensayo del que sale la dosis corrió <strong>12 meses</strong>, " +
+               "y a los 3 años los resultados se mantuvieron (PMID 17525699).");
+      }else{
+        t.push("El dolor <strong>no bajó</strong>. St George's NHS (F1) dice que si no mejoró en " +
+               "6 semanas, <strong>hay que hablar con un profesional</strong>.");
+        if(r.adherencia !== null && r.adherencia < 60){
+          t.push("Antes de concluir que el plan no sirve, mirá el otro número: tu adherencia es " +
+                 "<strong>" + r.adherencia + "%</strong>. Con adherencia baja el ejercicio pierde " +
+                 "contra la terapia manual (PMID 40273517); recién con adherencia alta empatan.");
+        }else{
+          t.push("Y tu adherencia está bien, así que no es eso. Llevá estos números a la consulta.");
+        }
+      }
+      if(semanas >= 12){
+        t.push("Pasaste las <strong>12 semanas</strong>, que es el plazo en el que F1 dice que la " +
+               "mayoría de los casos se resuelve. Dorset MSK (F4) aclara que en algunas personas " +
+               "lleva varios meses.");
+      }
+    }
+    t.push("<em>Ninguno de los papers citados es sobre vos. Esto es tu propio dato, que para " +
+           "decidir vale más que cualquier promedio poblacional.</em>");
+    ver.innerHTML = t.map(function(p){ return "<p>" + p + "</p>"; }).join("");
+  }
+  function item(clase, t, v, c){
+    return '<div class="rev-item ' + clase + '"><div class="t">' + esc(t) +
+           '</div><div class="v">' + esc(v) + '</div><div class="c">' + esc(c) + '</div></div>';
+  }
+
+  // ---------- galeria de movimientos ----------
+  // Se dibuja recien cuando abris el plan: son 25 SVG animados y no hay razon
+  // para tenerlos corriendo desde que carga la pagina. El bucle de FIG solo
+  // redibuja las que estan en pantalla.
+  var GALERIA = [
+    ["retraccion","Retracción de mentón"], ["flexion","Flexión"], ["extension","Extensión"],
+    ["inclinacion","Inclinación lateral"], ["rotacion","Rotación"],
+    ["iso-flexion","Isométrico · flexión"], ["iso-extension","Isométrico · extensión"],
+    ["iso-lateral","Isométrico · lateral"],
+    ["elev-supino","Elevación de cabeza boca arriba"], ["elev-prono","Elevación boca abajo"],
+    ["encogimientos","Encogimientos"], ["press","Press"], ["curl","Curl"],
+    ["remo","Remo inclinado"], ["aperturas","Aperturas"], ["pullover","Pullover"],
+    ["sentadilla","Sentadillas"], ["abdominal","Abdominales"], ["ext-espalda","Extensión de espalda"],
+    ["est-trapecio","Estiramiento de trapecio"], ["est-escalenos","Estiramiento de escalenos"],
+    ["est-elevador","Estiramiento del elevador"], ["apertura-libro","Apertura de libro"],
+    ["caminar","Levantarse y caminar"], ["elev-lateral","Sesión corta · elevación lateral"]
+  ];
+  (function(){
+    var det = document.querySelector(".plan");
+    var cont = document.getElementById("galeria");
+    var hecha = false;
+    function pintar(){
+      if(hecha) return;
+      hecha = true;
+      cont.innerHTML = GALERIA.map(function(g){
+        return '<figure>' + FIG(g[0], g[1]) + '<figcaption>' + esc(g[1]) + '</figcaption></figure>';
+      }).join("");
+    }
+    det.addEventListener("toggle", function(){ if(det.open) pintar(); });
+    if(det.open) pintar();
+  })();
+
+  // ---------- la semana, dibujada como vertebras ----------
+  // Siete dias, una vertebra cada uno: llena si ese dia hiciste la sesion.
+  // Es el mismo motivo del icono de la app, y dice de un vistazo lo unico que
+  // importa medir — si estas entrenando o no.
+  function pintarTira(){
+    var svg = document.getElementById("tira");
+    var pie = document.getElementById("tira-pie");
+    var hoy = hoyISO(), hechas = 0, partes = [];
+
+    for(var i = 0; i < 7; i++){
+      var iso = sumarDias(hoy, i - 6);
+      var e = datos[iso] || {};
+      var hizo = e.fuerza === 1;
+      var hay = Object.keys(e).length > 0;
+      if(hizo) hechas++;
+      var x = i * 32 + 3;
+      var esHoy = (iso === hoy);
+      partes.push('<rect x="' + x + '" y="6" width="24" height="30" rx="9" ' +
+        'fill="' + (hizo ? "#ff7a00" : "#141414") + '" ' +
+        'stroke="' + (esHoy ? "#ff7a00" : (hay ? "#3a3a3a" : "#262626")) + '" ' +
+        'stroke-width="' + (esHoy ? 2 : 1.5) + '"/>');
+      partes.push('<circle cx="' + (x + 12) + '" cy="21" r="4" fill="' +
+        (hizo ? "#141414" : (hay ? "#3a3a3a" : "#262626")) + '"/>');
+      partes.push('<title>' + esc(iso) + (hizo ? ": sesión hecha" : ": sin sesión") + '</title>');
+    }
+    svg.innerHTML = partes.join("");
+
+    var faltan = OBJETIVO_SEMANAL - hechas;
+    pie.innerHTML = hechas === 0
+      ? "Ninguna sesión en los últimos 7 días. El objetivo es <b>3</b>."
+      : "<b>" + hechas + "</b> de 3 sesiones en los últimos 7 días" +
+        (faltan > 0 ? " — te falta" + (faltan > 1 ? "n " + faltan : " 1") + "." : " — objetivo cumplido.");
+  }
+
+  function pintarEstadoCabecera(r){
+    var el = document.getElementById("estado-cabecera");
+    if(!r.inicio){
+      el.textContent = "Empezá cuando quieras: la primera sesión que hagas arranca el programa.";
+      return;
+    }
+    var sem = semanaActual(r.inicio);
+    var txt = "Semana " + sem + " de 12";
+    if(r.dolorUlt7 !== null) txt += " · dolor " + un(r.dolorUlt7) + "/10 esta semana";
+    if(r.adherencia !== null) txt += " · adherencia " + r.adherencia + "%";
+    el.textContent = txt + ".";
+  }
+
+  // ---------- render general ----------
+  function pintarTodo(){
+    var r = calcular();
+    pintarMetricas(r);
+    pintarGrafico();
+    pintarHitos(r);
+    pintarTabla();
+    pintarHoy();
+    pintarTira();
+    pintarEstadoCabecera(r);
+    pintarRevision(r);
+  }
+
+  pintarTodo();
+
+  // ---------- service worker: que funcione sin internet ----------
+  // Solo corre servido por http(s). Abierto con doble clic (file://) no
+  // registra, y no hace falta: el archivo ya está en el disco.
+  if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){ /* sin offline, funciona igual */ });
+    });
+  }
+})();
+</script>
+</body>
+</html>
